@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  meteor-app:
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://admin:meteor_password@meteor-db/meteor
+    build: 
+      context: . 
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - meteor-network
+  meteor-db:
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=temporary_password
+      - MYSQL_DATABASE=meteor
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=meteor_password
+    networks:
+      - meteor-network
+
+networks:
+  meteor-network:
+    driver: bridge

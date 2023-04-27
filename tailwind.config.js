@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         primary: "#1F2227",
         secondary: "#2F3136",
+        nav: "#1E2227"
       }
     },
   },

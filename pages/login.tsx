@@ -1,4 +1,5 @@
 import Input from "@/components/reusable/Input";
+import NavBar from "@/components/layout/nav";
 import { useState } from "react";
 
 export default function Login() {
@@ -8,9 +9,10 @@ export default function Login() {
         setCreds({ ...creds, [cred]: value })
     }
     return (
-        <div>
+        <div className="relative">
+            <NavBar/>
             <div className="meteor-login-bg" />
-            <div className="w-screen h-screen flex justify-center items-center">
+            <div className="full-screen flex justify-center items-center">
                 <div className="bg-secondary rounded-lg p-10 shadow-2xl w-[80%] md:w-auto">
                     <p className="text-6xl font-bold meteor-text">Meteor</p>
                     <p className="opacity-70 font-semibold">Simple ShareX Uploader</p>
