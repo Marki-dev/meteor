@@ -33,7 +33,7 @@ export default function Input({ placeholder, type, value, internalIcon, disabled
         onIconClick()
     }
     return (
-        <div className={`rounded-lg p-1 border border-opacity-30 border-white hover:border-green-500 duration-300 bg-primary flex items-center relative`}>
+        <div className={`rounded-lg p-1 border border-opacity-30 border-white hover:border-green-500 duration-300 bg-primary flex items-center relative w-full`}>
 
             <input disabled={disabled} value={value} type={internalType} onChange={change} placeholder={placeholder} className="disabled:text-gray-400 disabled:cursor-not-allowed rounded-md px-3 py-1 w-full bg-primary focus:ring-0" />
             {type === "password" && (

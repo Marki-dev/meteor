@@ -4,17 +4,31 @@ import NavBar from '@/components/layout/nav';
 import Checkbox from '@/components/reusable/Checkbox';
 import { RadioGroup } from '@headlessui/react';
 import { FaCheckCircle } from 'react-icons/fa';
+import Input from '@/components/reusable/Input';
 
 type ConfigType = {
-    attribution?: boolean;
-    mode?: "s3" | "filesystem";
+    app_attribution?: boolean;
+    app_mode?: "s3" | "filesystem";
+    // Credentials
+    app_username?: string;
+    app_password?: string;
+    // S3
+    s3_endpoint?: string;
+    s3_access_key?: string;
+    s3_secret_key?: string;
+    s3_use_ssl?: boolean;
 }
 
 export default function ConfigFlow() {
-    const [config, setConfig] = useState<ConfigType>({})
+    const [config, setConfig] = useState<ConfigType>({
+
+    })
     function changeConfig(key: keyof ConfigType, value: any) {
         setConfig({ ...config, [key]: value })
         console.log(config)
+    }
+    function submit() {
+        if (!config.app_attribution) return
     }
     return (
         <div className="relative">
@@ -30,44 +44,54 @@ export default function ConfigFlow() {
                         <div className="flex justify-center items-center flex-col gap-y-5">
                             <p>Firstly, we need to discuss modifying this app.</p>
                             <p>Personally, I don't mind if you alter the branding, color scheme, or even add or modify features to fit your needs. However, I request that you not remove the attribution displayed on the bottom left of the page. I spent a great deal of time creating this app, and I would like people to know who built it – Thyke.</p>
-                            {config.attribution === false && (
+                            {config.app_attribution === false && (
                                 <p className='text-red-500 font-black'>Please Acknowlage the Attribution</p>
                             )}
-                            <Checkbox onChange={(b) => (changeConfig("attribution", b))} label='I will not modify the Attribution' />
+                            <Checkbox onChange={(b) => (changeConfig("app_attribution", b))} label='I will not modify the Attribution' />
                         </div>
                         <div className="flex justify-center items-center flex-col gap-y-5">
                             <p>Application Mode</p>
-                            <ApplicationMode onChange={(d) => changeConfig('mode', d)} items={[
+                            <ApplicationMode onChange={(d) => changeConfig('app_mode', d)} items={[
                                 { name: "FileSystem", value: "filesystem", description: "Meteor will store all uploads in the local filesystem. This is the default mode, and is recommended for most users." },
                                 { name: "S3", value: "s3", description: "Meteor will store all uploads in an S3 bucket. This is recommended for users who want to store their uploads in a remote location, or who want to use Meteor as a CDN." },
                             ]} />
-                            {config.mode === "s3" && (
+                            {config.app_mode === "s3" && (
                                 <p>cheese</p>
                             )}
 
                         </div>
-                        {config.mode === "s3" && (
+                        {config.app_mode === "s3" && (
                             <div className="flex justify-center items-center flex-col gap-y-5">
                                 <p>Amazon S3</p>
                                 <p>Enter your Amazon S3 credentials below. If you don't have an S3 bucket, you can create one <a href="https://s3.console.aws.amazon.com/s3/home" className="text-primary">here</a>.</p>
                                 <div className="flex justify-center items-center flex-col gap-y-5">
-                                    <input type="text" placeholder="Access Key" className="bg-nav rounded-lg p-2 w-[80%] md:max-w-[30vw]" />
-                                    <input type="text" placeholder="Secret Key" className="bg-nav rounded-lg p-2 w-[80%] md:max-w-[30vw]" />
-                                    <input type="text" placeholder="Bucket Name" className="bg-nav rounded-lg p-2 w-[80%] md:max-w-[30vw]" />
-                                    <input type="text" placeholder="Region" className="bg-nav rounded-lg p-2 w-[80%] md:max-w-[30vw]" />
+                                    <Input placeholder='Endpoint' onChange={(val) => changeConfig("s3_endpoint", val)} />
+                                    <Input placeholder='Access Key' onChange={(val) => changeConfig("s3_access_key", val)} />
+                                    <Input placeholder='Secret Key' onChange={(val) => changeConfig("s3_secret_key", val)} />
+                                    <Checkbox onChange={(b) => (changeConfig("s3_use_ssl", b))} label='Use SSL' />
                                 </div>
                             </div>
                         )}
+                        {/* Login Credentials */}
+                        <div className="flex justify-center items-center flex-col gap-y-5">
+                            <p>Login Credentials</p>
+                            <p>Enter the credentials you would like to use to access the dashboard. (This will also be the ADMINISTRATOR account)</p>
+                            <div className="flex justify-center items-center flex-col gap-y-5">
+                                <Input placeholder='Username' onChange={(val) => changeConfig("app_username", val)} />
+                                <Input type='password' placeholder='Password' onChange={(val) => changeConfig("app_password", val)} />
+                            </div>
+                        </div>
                         <div className="flex justify-center items-center flex-col gap-y-5">
                             <p>Setup Complete</p>
                             {/* Reboot Button */}
-                            <button className="bg-green-500 rounded-lg p-3 w-[80%] md:max-w-[30vw]">Reboot</button>
+                            <button onClick={submit} className="bg-green-500 rounded-lg p-3 w-[80%] md:max-w-[30vw]">Crash Meteor!</button>
 
                         </div>
                     </Animator>
                 </div>
             </div>
         </div>
+
     )
 }
 
@@ -203,7 +227,6 @@ const ConfigStep: React.FC<ConfigStepProps> = ({ title, children, isActive }) =>
             transition={{ duration: 0.3 }}
             style={{ display: isActive ? 'block' : 'none' }}
         >
-            {/* <h3>{title}</h3> */}
             {children}
         </motion.div>
     );

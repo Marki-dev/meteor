@@ -31,15 +31,15 @@ export default function MainAPPPage() {
 
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 transition-all gap-3 my-3'>
-                {Array.from({ length: 5 *2 }).map((stat, i) => (
+                {Array.from({ length: 5 * 2 }).map((stat, i) => (
                     <div key={i} className=' bg-primary p-3 rounded-lg md:justify-between hover:scale-[1.05] group duration-300'>
                         <img src={`https://picsum.photos/${getRandomNumber(256, 2560)}/${getRandomNumber(256, 2560)}?penis=${i}`} alt='' className='grayscale group-hover:grayscale-0 rounded-lg w-full h-48  object-none' />
                         <div className='flex justify-between items-center'>
-                            <div className='flex w-1/2 items-center'>
-                                <p className='text-4xl font-bold opacity-50'>UploadID</p>
+                            <div className='flex w-1/2 items-center h-full'>
+                                <p className='text-2xl font-semibold opacity-50'>AbC1eFg2</p>
                             </div>
                             <div className='flex items-center'>
-                                <FaCommentDots className='text-3xl'/>
+                                <FaCommentDots className='text-3xl' />
                             </div>
                         </div>
                     </div>
@@ -53,5 +53,4 @@ export default function MainAPPPage() {
 
 function getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-  
+}
