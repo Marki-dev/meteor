@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRef, useEffect } from "react";
-import { FaHome, FaUpload, FaWrench } from "react-icons/fa";
+import { FaCogs, FaHome, FaUpload, FaWrench } from "react-icons/fa";
 import { IconType } from "react-icons/lib";
 
 export default function SideBar({ set, show }: { set: (val: boolean) => void, show: boolean }) {
@@ -20,9 +20,9 @@ export default function SideBar({ set, show }: { set: (val: boolean) => void, sh
                     link: "/app/uploads"
                 },
                 {
-                    name: "Config",
-                    icon: FaWrench,
-                    link: "/app/config"
+                    name: "Settings",
+                    icon: FaCogs,
+                    link: "/app/settings"
                 },
             ]
         },

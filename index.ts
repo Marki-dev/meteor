@@ -1,18 +1,31 @@
+// INit env vars
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
+import minio, { Client } from "minio"
 import next from 'next';
 import klaw from 'klaw';
 import path from 'path';
 
 const port = process.env.PORT || 3000;
-const dev = process.env.NODE_ENV !== 'production';
+const dev = true;
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const server = express();
 
+const minioClient = new Client({
+    endPoint: process.env.S3_ENDPOINT || "",
+    port: parseInt(process.env.S3_PORT || "9000"),
+    accessKey: process.env.S3_ACCESS_KEY || "",
+    secretKey: process.env.S3_SECRET_KEY || ""
+})
+
+
 app.prepare().then(async () => {
 
     server.use((req, res, next) => {
-        console.log(req.method + ' ' + req.url);
+        if (!req.url.startsWith("/_next")) console.log(req.method + ' ' + req.url);
         next();
     });
 

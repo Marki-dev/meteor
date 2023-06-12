@@ -1,27 +1,60 @@
 version: '3.8'
 
+x-config:
+  sql-db: meteor
+  sql-username: sql-username
+  sql-password: sql-password
+  sql-root-password: ROOTSQLPASSWORD
+  s3-access-key: s3-access-key
+  s3-secret-key: s3-secret-key
+
 services:
-  meteor-app:
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=mysql://admin:meteor_password@meteor-db/meteor
-    build: 
-      context: . 
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    networks:
-      - meteor-network
+  # meteor-app:
+  #   environment:
+  #     - NODE_ENV=production
+  #     - DEV=true
+  #     - DATABASE_URL=mysql://${x-config.sql-username}:${x-config.sql-password}@meteor-db/${x-config.sql-db}
+  #     - S3_ENDPOINT=minio
+  #     - S3_BUCKET=meteor
+  #     - S3_PORT=9000
+  #     - S3_ACCESS_KEY=${x-config.s3-access-key}
+  #     - S3_SECRET_KEY=${x-config.s3-secret-key}
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - meteor-network
+  #   depends_on:
+  #     - minio
+
   meteor-db:
     image: mariadb
     environment:
-      - MYSQL_ROOT_PASSWORD=temporary_password
-      - MYSQL_DATABASE=meteor
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=meteor_password
+      - MYSQL_ROOT_PASSWORD=${x-config.sql-root-password}
+      - MYSQL_DATABASE=${x-config.sql-db}
+      - MYSQL_USER=${x-config.sql-username}
+      - MYSQL_PASSWORD=${x-config.sql-password}
+    networks:
+      - meteor-network
+
+  minio:
+    image: minio/minio
+    command: server /data
+    ports:
+      - "9000:9000"
+    environment:
+      - MINIO_ACCESS_KEY=${x-config.s3-access-key}
+      - MINIO_SECRET_KEY=${x-config.s3-secret-key}
+    volumes:
+      - minio-data:/data
     networks:
       - meteor-network
 
 networks:
   meteor-network:
     driver: bridge
+
+volumes:
+  minio-data:

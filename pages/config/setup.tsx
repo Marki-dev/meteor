@@ -49,29 +49,6 @@ export default function ConfigFlow() {
                             )}
                             <Checkbox onChange={(b) => (changeConfig("app_attribution", b))} label='I will not modify the Attribution' />
                         </div>
-                        <div className="flex justify-center items-center flex-col gap-y-5">
-                            <p>Application Mode</p>
-                            <ApplicationMode onChange={(d) => changeConfig('app_mode', d)} items={[
-                                { name: "FileSystem", value: "filesystem", description: "Meteor will store all uploads in the local filesystem. This is the default mode, and is recommended for most users." },
-                                { name: "S3", value: "s3", description: "Meteor will store all uploads in an S3 bucket. This is recommended for users who want to store their uploads in a remote location, or who want to use Meteor as a CDN." },
-                            ]} />
-                            {config.app_mode === "s3" && (
-                                <p>cheese</p>
-                            )}
-
-                        </div>
-                        {config.app_mode === "s3" && (
-                            <div className="flex justify-center items-center flex-col gap-y-5">
-                                <p>Amazon S3</p>
-                                <p>Enter your Amazon S3 credentials below. If you don't have an S3 bucket, you can create one <a href="https://s3.console.aws.amazon.com/s3/home" className="text-primary">here</a>.</p>
-                                <div className="flex justify-center items-center flex-col gap-y-5">
-                                    <Input placeholder='Endpoint' onChange={(val) => changeConfig("s3_endpoint", val)} />
-                                    <Input placeholder='Access Key' onChange={(val) => changeConfig("s3_access_key", val)} />
-                                    <Input placeholder='Secret Key' onChange={(val) => changeConfig("s3_secret_key", val)} />
-                                    <Checkbox onChange={(b) => (changeConfig("s3_use_ssl", b))} label='Use SSL' />
-                                </div>
-                            </div>
-                        )}
                         {/* Login Credentials */}
                         <div className="flex justify-center items-center flex-col gap-y-5">
                             <p>Login Credentials</p>
@@ -84,7 +61,7 @@ export default function ConfigFlow() {
                         <div className="flex justify-center items-center flex-col gap-y-5">
                             <p>Setup Complete</p>
                             {/* Reboot Button */}
-                            <button onClick={submit} className="bg-green-500 rounded-lg p-3 w-[80%] md:max-w-[30vw]">Crash Meteor!</button>
+                            <button onClick={submit} className="bg-green-500 rounded-lg p-3 w-[80%] md:max-w-[30vw]">Crash a Meteor!</button>
 
                         </div>
                     </Animator>
