@@ -29,6 +29,7 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.8.0",
     "react-syntax-highlighter": "^15.5.0",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss": "3.3.2",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
