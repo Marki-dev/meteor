@@ -1,38 +1,56 @@
-import { type } from 'os';
-import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
+import { ChangeEventHandler, useState, useEffect } from 'react';
 
 type AutocompleteProps = {
-    options: string[];
-    type: "input" | "textarea";
+    options?: string[];
+    type: 'input' | 'textarea';
+    maxChars?: number;
+    value?: string;
     onChange?: (d: string) => void;
 };
 
-export default function AutoCompleteInput({ options, onChange, type }: AutocompleteProps) {
+export default function AutoCompleteInput({
+    options = [],
+    onChange,
+    type,
+    maxChars,
+    value = '',
+}: AutocompleteProps) {
     const [lastWord, setLastWord] = useState<string>('');
-    const [inputValue, setInputValue] = useState<string>('');
+    const [inputValue, setInputValue] = useState<string>(value);
     const [selectedOption, setSelectedOption] = useState<string>('');
-    console.log(selectedOption)
 
-    const handleTextChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    useEffect(() => {
+        setInputValue(value);
+    }, [value]);
+
+    const handleTextChange: ChangeEventHandler<
+        HTMLInputElement | HTMLTextAreaElement
+    > = (event) => {
         const inputText = event.target.value;
         const cursorPos = event.target.selectionStart;
 
-        const wordsBeforeCursor = inputText.substr(0, cursorPos!).trim().split(' ');
-        const lastWordBeforeCursor = wordsBeforeCursor[wordsBeforeCursor.length - 1];
+        const wordsBeforeCursor = inputText
+            .substr(0, cursorPos!)
+            .trim()
+            .split(' ');
+        const lastWordBeforeCursor =
+            wordsBeforeCursor[wordsBeforeCursor.length - 1];
 
         setLastWord(lastWordBeforeCursor);
         setInputValue(inputText);
+        onChange && onChange(inputText);
     };
 
-
-    const filteredOptions = options.filter((option) => option.includes(lastWord));
+    const filteredOptions = options.filter((option) =>
+        option.startsWith(lastWord)
+    );
     const openComboBox = filteredOptions.length > 0 && lastWord.length > 0;
 
     const finishAutoComplete = (option: string) => {
         setInputValue((prevInputValue) => {
             const words = prevInputValue.trim().split(' ');
             words[words.length - 1] = option;
-            return words.join(' ') + " ";
+            return words.join(' ') + ' ';
         });
         setSelectedOption('');
         setLastWord('');
@@ -41,9 +59,15 @@ export default function AutoCompleteInput({ options, onChange, type }: Autocompl
         }
     };
 
+    const remainingChars = maxChars
+        ? maxChars - inputValue.length
+        : undefined;
+    const hasReachedMaxChars =
+        maxChars && inputValue.length >= maxChars;
+
     return (
         <div className="relative w-full">
-            {type === "input" ? (
+            {type === 'input' ? (
                 <input
                     className="bg-secondary rounded-lg p-1 focus:outline-none border-2 border-secondary focus:border-x3 w-full"
                     value={inputValue}
@@ -51,14 +75,22 @@ export default function AutoCompleteInput({ options, onChange, type }: Autocompl
                 />
             ) : (
                 <textarea
-                    rows={10}
+                    rows={6}
                     className="bg-secondary rounded-lg p-1 focus:outline-none border-2 border-secondary focus:border-x3 w-full"
                     value={inputValue}
                     onChange={handleTextChange}
                 />
             )}
+            {remainingChars !== undefined && (
+                <div className="text-xs text-right text-gray-500">{`${remainingChars} characters remaining`}</div>
+            )}
+            {hasReachedMaxChars && (
+                <div className="text-xs text-right text-red-500">
+                    Maximum character limit reached
+                </div>
+            )}
             {openComboBox && (
-                <div className="absolute mt-1 p-1 bg-secondary w-full rounded-lg shadow-lg max-h-52 overflow-y-scroll">
+                <div className="absolute mt-1 p-1 bg-secondary w-full rounded-lg shadow-lg max-h-52 overflow-y-scroll z-40">
                     {filteredOptions.map((option) => (
                         <div
                             key={option}

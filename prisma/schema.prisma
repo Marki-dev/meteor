@@ -10,10 +10,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Self {
   id Int @id @default(autoincrement())
-  username String @unique
+  masterDomain String?
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  username String     @unique
+  email    String     @unique
   password String
+  avatar   String?
+  tokens   WebToken[]
 
+  created_at DateTime @default(now())
+  last_seen  DateTime @default(now())
+}
 
+model WebToken {
+  id     Int    @id @default(autoincrement())
+  token  String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
+
+  // Tracking Data
+  ip_address String
+  user_agent String
+
+  created_at DateTime @default(now())
+  last_seen  DateTime @default(now())
 }

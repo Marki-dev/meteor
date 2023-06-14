@@ -7,10 +7,7 @@ type DiscordPreviewProps = {
     domain?: string
     embed?: {
         enabled: boolean
-        title: {
-            text: string
-            url?: string
-        }
+        title: string
         description: string
         color: string
         author: string
@@ -34,9 +31,9 @@ const DiscordPreview = ({ username, avatar, domain, embed }: DiscordPreviewProps
                             <div className="bg-[#2B2D31] p-2 rounded-r-md flex flex-col gap-2">
                                 <p className="text-xs opacity-60">{embed.provider}</p>
                                 <p>{embed.author}</p>
-                                <p className={`${embed.title.url && "text-blue-400"} cursor-pointer font-semibold hover:underline`}>{embed.title.text}</p>
+                                <p className="cursor-pointer font-semibold hover:underline">{embed.title}</p>
                                 <p className="text-sm">{embed.description}</p>
-                                <img className="w-full cursor-pointer rounded-md" src="https://source.unsplash.com/collection/256443?91" />
+                                <img className="max-h-[50vh] cursor-pointer rounded-md" src="https://source.unsplash.com/collection/256443?91" />
                             </div>
                         </div>
                     ) : null}
