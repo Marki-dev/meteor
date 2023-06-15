@@ -1,8 +1,10 @@
 import JSONRender from "@/components/reusable/jsonrender"
+import { useUser } from "@/hooks/UserHook"
 import getConfig from "@/util/web/configGen"
 import { useEffect, useRef, useState } from "react"
 
 export default function ConfigGeneration() {
+    const userContext = useUser()
     return (
         <div className='grid grid-cols-4 gap-10'>
             <div className='bg-primary p-3 rounded-lg shadow-lg  col-span-4 md:col-span-2'>
@@ -12,7 +14,7 @@ export default function ConfigGeneration() {
             <div className='bg-primary p-3 rounded-lg shadow-lg w-full col-span-4 md:col-span-2'>
                 <p className='text-4xl font-bold'>Token</p>
                 <div className='text-xl font-bold opacity-50 py-3'>
-                    <TokenDisplay text="asdasda" />
+                    <TokenDisplay text={userContext?.user?.uploadToken || "Loading"} />
                 </div>
             </div>
 
@@ -24,6 +26,7 @@ export default function ConfigGeneration() {
 
 type configTypes = string
 function ConfigGenerator() {
+    const userContext = useUser()
     const [configType, setConfigType] = useState<configTypes>("")
 
     const handleDownload = () => {
@@ -42,7 +45,7 @@ function ConfigGenerator() {
                 <div className='flex flex-col items-center h-full'>
                     <p className='text-xl opacity-70 font-bold mt-3 mb-4'>Select a config type</p>
                     <div className='flex flex-col items-center justify-center w-full gap-2'>
-                        {["ShareX", "FlameShot", "MagicCap"].map((type, i) => (
+                        {["ShareX"].map((type, i) => (
                             <button key={i} onClick={() => setConfigType(type.toLowerCase())} className={`${configType == type.toLowerCase() ? "bg-blue-400 bg-opacity-75" : "bg-secondary"} p-3 rounded-lg w-full`}>
                                 <p className='text-2xl font-bold'>{type}</p>
                             </button>
@@ -54,7 +57,7 @@ function ConfigGenerator() {
             <div className='bg-primary p-3 rounded-lg shadow-lg w-full col-span-4 md:col-span-3 row-span-2'>
                 {configType ? (
                     <>
-                        <JSONRender takeOverFunction={() => handleDownload()} redact={["{{token}}"]} copyReplace="Download" value={getConfig(configType)} />
+                        <JSONRender takeOverFunction={() => handleDownload()} redact={[`${userContext?.user?.uploadToken}`]} copyReplace="Download" value={getConfig(configType, [["{{token}}", `${userContext?.user?.uploadToken}`]])} />
                     </>
                 ) : (
                     <div className='flex flex-col items-center justify-center h-full'>
@@ -88,7 +91,7 @@ function TokenDisplay({ text }: { text: string }) {
 
     return (
         <div className="relative" ref={ref}>
-            <div className='bg-[#15161A] border-secondary border rounded-lg p-2 cursor-pointer' onClick={() => setShowToken(!showToken)}>
+            <div className='bg-[#15161A] border-secondary border rounded-lg p-2 cursor-pointer overflow-x-scroll scrollbar-hide' onClick={() => setShowToken(!showToken)}>
                 {showToken ? text : "Click to show token"}
             </div>
         </div>

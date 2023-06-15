@@ -18,10 +18,18 @@ router.use(fileUpload());
  * @returns {Object} Info
  * * 
 */
-router.post("/", (req, res) => {
-    const file = req.files?.file
-    if (!req.files || !file) return res.status(400).json({ error: "No files were uploaded." });
+router.post("/", async (req, res) => {
+    if (!req.headers.token) return res.status(400).json({ error: "No token provided." })
 
+    const user = await req.db.user.findFirst({
+        where: {
+            uploadToken: req.headers.token as string
+        }
+    })
+    if (!user) return res.status(400).json({ error: "Invalid token." })
+
+    let files = req.files?.file
+    if (!req.files || !files) return res.status(400).json({ error: "No files were uploaded." });
 })
 
 

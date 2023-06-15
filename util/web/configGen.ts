@@ -5,7 +5,8 @@ type configType = {
     RequestMethod: string;
     RequestURL: string;
     Body: string;
-    Arguments: Record<string, any>;
+    Arguments?: Record<string, any>;
+    Headers?: Record<string, any>;
     FileFormName: string;
     URL: string;
     DeletionURL: string;
@@ -21,7 +22,7 @@ const configs: Record<string, configType> = {
         "RequestMethod": "POST",
         "RequestURL": "https://{{domain}}/api/upload",
         "Body": "MultipartFormData",
-        "Arguments": {
+        "Headers": {
             "token": "Bearer {{token}}"
         },
         "FileFormName": "file",
@@ -77,7 +78,7 @@ export default function getConfig(name: string, replace?: [string, string][]): R
         for (let i = 0; i < replace.length; i++) {
             const [key, value] = replace[i];
 
-            configStr = configStr.replace(`{{${key}}}`, value);
+            configStr = configStr.replace(key, value);
         }
     }
     return JSON.parse(configStr);

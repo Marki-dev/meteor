@@ -108,3 +108,104 @@ body {
   box-shadow: 14px 14px 28px #1c1f23,
     -14px -14px 28px #22252b;
 }
+
+/* Taken from https://codepen.io/theDeanH/pen/zBZXLN THanks :p */
+
+.animate-wiggle {
+  -webkit-animation: wiggle 3s infinite;
+  -moz-animation: wiggle 3s infinite;
+  -ms-animation: wiggle 3s infinite;
+  animation: wiggle 3s infinite;
+  animation-delay: 1s;
+  animation-timing-function: ease-in-out;
+}
+
+@-webkit-keyframes wiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  10% {
+    -webkit-transform: rotate(10deg);
+  }
+
+  20% {
+    -webkit-transform: rotate(-10deg);
+  }
+
+  40% {
+    -webkit-transform: rotate(20deg);
+  }
+
+  60% {
+    -webkit-transform: rotate(-5deg);
+  }
+
+  80% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+
+@-ms-keyframes wiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  10% {
+    -ms-transform: rotate(1deg);
+  }
+
+  20% {
+    -ms-transform: rotate(-1deg);
+  }
+
+  40% {
+    -ms-transform: rotate(1.5deg);
+  }
+
+  60% {
+    -ms-transform: rotate(-5deg);
+  }
+
+  80% {
+    -ms-transform: rotate(0deg);
+  }
+
+  100% {
+    -ms-transform: rotate(0deg);
+  }
+}
+
+@keyframes wiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  10% {
+    transform: rotate(10deg);
+  }
+
+  20% {
+    transform: rotate(-10deg);
+  }
+
+  40% {
+    transform: rotate(15deg);
+  }
+
+  60% {
+    transform: rotate(-5deg);
+  }
+
+  80% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}

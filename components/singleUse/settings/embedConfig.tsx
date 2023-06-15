@@ -112,11 +112,11 @@ export default function EmbedConfig() {
                     className='absolute bottom-5 right-5 bg-secondary p-2 rounded-md mx-3 flex items-center gap-2 '>
                     <p className='text-2xl font-bold'>Unsaved Changes</p>
                     <div className='flex'>
-                        <div onClick={saveEmbed} className='bg-green-400 hover:bg-opacity-75 rounded-l-md p-2 flex items-center gap-2'>
+                        <div onClick={saveEmbed} className='bg-green-400 hover:bg-opacity-75 rounded-l-md p-2 flex items-center gap-2 cursor-pointer'>
                             <FaSave />
                             <p className='text-xl font-black'>Save</p>
                         </div>
-                        <div onClick={resetEmbed} className='bg-red-400 hover:bg-opacity-75 rounded-r-md p-2 flex items-center gap-2'>
+                        <div onClick={resetEmbed} className='bg-red-400 hover:bg-opacity-75 rounded-r-md p-2 flex items-center gap-2 cursor-pointer'>
                             <FaUndo />
                             <p className='text-xl font-black'>Revert</p>
                         </div>

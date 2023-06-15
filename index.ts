@@ -7,6 +7,7 @@ import minio, { Client } from "minio"
 import next from 'next';
 import klaw from 'klaw';
 import path from 'path';
+import cookies from "cookie-parser"
 import { MinioClient } from './structures/MinioClient';
 
 const port = process.env.PORT || 3000;
@@ -14,7 +15,7 @@ const dev = true;
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const server = express();
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, User } from "@prisma/client"
 const db = new PrismaClient()
 
 const minioClient = new MinioClient({
@@ -23,7 +24,7 @@ const minioClient = new MinioClient({
     accessKey: process.env.S3_ACCESS_KEY || "",
     secretKey: process.env.S3_SECRET_KEY || ""
 })
-
+mino
 db.$connect().then(() => {
     console.log("Connected to database.")
     app.prepare().then(async () => {
@@ -31,9 +32,11 @@ db.$connect().then(() => {
         server.use((req, res, next) => {
             req.minio = minioClient
             req.db = db
+            req.user = null
             if (!req.url.startsWith("/_next")) console.log(req.method + ' ' + req.url);
+
             next();
-        });
+        }, express.json(), express.urlencoded({ extended: true }), cookies());
 
         async function loadRoutes() {
             let routes = 0
@@ -76,6 +79,8 @@ declare global {
         interface Request {
             minio: MinioClient;
             db: PrismaClient;
+
+            user: User | null
         }
     }
 }

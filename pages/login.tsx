@@ -1,16 +1,39 @@
 import Input from "@/components/reusable/Input";
 import NavBar from "@/components/layout/nav";
 import { useState } from "react";
+import MeteorFetch from "@/util/web/MeteorFetch";
+import { useRouter } from "next/router";
+import { useUser } from "@/hooks/UserHook";
 
 export default function Login() {
+    const router = useRouter()
+    const userContext = useUser()
 
+    const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
     const [creds, setCreds] = useState({ username: "", password: "" })
     function changeCreds(cred: "username" | "password", value: string) {
         setCreds({ ...creds, [cred]: value })
     }
+    function login() {
+        if (loading) return
+        setLoading(true)
+        MeteorFetch("/auth/login", {
+            method: "POST",
+            body: JSON.stringify(creds)
+        }).then((res) => {
+            setLoading(false)
+            if (res.errors?.length) {
+                setError(res.errors[0])
+                return console.error(res.error)
+            }
+            userContext?.setUser(res)
+            router.push("/app")
+        })
+    }
     return (
         <div className="relative">
-            <NavBar/>
+            <NavBar />
             <div className="meteor-login-bg" />
             <div className="full-screen flex justify-center items-center">
                 <div className="bg-secondary rounded-lg p-10 shadow-2xl w-[80%] md:w-auto">
@@ -23,9 +46,10 @@ export default function Login() {
                         </div>
                         <div>
                             <p>Password</p>
-                            <Input onChange={(val) => changeCreds("password", val)} placeholder="GayFurry12345" />
+                            <Input onChange={(val) => changeCreds("password", val)} type="password" placeholder="GayFurry12345" />
                         </div>
-                        <div className="meteor-login-button rounded-lg shadow-lg bg-[#6079C6] p-3 flex items-center justify-center hover:bg-opacity-80 cursor-pointer">
+                        <p className="text-red-500 text-sm">{error}</p>
+                        <div onClick={login} className="meteor-login-button rounded-lg shadow-lg bg-[#6079C6] p-3 flex items-center justify-center hover:bg-opacity-80 cursor-pointer">
                             <p className="text-3xl font-black">Login</p>
                         </div>
                     </div>
