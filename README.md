@@ -26,6 +26,7 @@ services:
       - S3_ENDPOINT=minio
       - S3_BUCKET=meteor
       - S3_PORT=9000
+      - S#_BUCKET=bucketname
       - S3_ACCESS_KEY=S3-ACCESS-KEY
       - S3_SECRET_KEY=S3-SECRET-KEY
     build:

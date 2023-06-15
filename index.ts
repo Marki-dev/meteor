@@ -24,7 +24,6 @@ const minioClient = new MinioClient({
     accessKey: process.env.S3_ACCESS_KEY || "",
     secretKey: process.env.S3_SECRET_KEY || ""
 })
-mino
 db.$connect().then(() => {
     console.log("Connected to database.")
     app.prepare().then(async () => {
