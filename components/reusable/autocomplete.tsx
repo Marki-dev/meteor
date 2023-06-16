@@ -1,4 +1,4 @@
-import {type ChangeEventHandler, useState, useEffect} from 'react';
+import { type ChangeEventHandler, useState, useEffect } from 'react';
 
 type AutocompleteProps = {
 	options?: string[];
@@ -17,33 +17,28 @@ export default function AutoCompleteInput({
 }: AutocompleteProps) {
 	const [lastWord, setLastWord] = useState<string>('');
 	const [inputValue, setInputValue] = useState<string>(value);
-	const [selectedOption, setSelectedOption] = useState<string>('');
+	const [selectedOption, setSelectedOption] = useState<string>();
 
 	useEffect(() => {
 		setInputValue(value);
 	}, [value]);
 
 	const handleTextChange: ChangeEventHandler<
-	HTMLInputElement | HTMLTextAreaElement
+		HTMLInputElement | HTMLTextAreaElement
 	> = event => {
 		const inputText = event.target.value;
 		const cursorPos = event.target.selectionStart;
 
-		const wordsBeforeCursor = inputText
-			.substr(0, cursorPos!)
-			.trim()
-			.split(' ');
-		const lastWordBeforeCursor
-            = wordsBeforeCursor[wordsBeforeCursor.length - 1];
+		const wordsBeforeCursor = inputText.substr(0, cursorPos!).trim().split(' ');
+		const lastWordBeforeCursor =
+			wordsBeforeCursor[wordsBeforeCursor.length - 1];
 
 		setLastWord(lastWordBeforeCursor);
 		setInputValue(inputText);
 		onChange?.(inputText);
 	};
 
-	const filteredOptions = options.filter(option =>
-		option.startsWith(lastWord),
-	);
+	const filteredOptions = options.filter(option => option.startsWith(lastWord));
 	const openComboBox = filteredOptions.length > 0 && lastWord.length > 0;
 
 	const finishAutoComplete = (option: string) => {
@@ -59,11 +54,8 @@ export default function AutoCompleteInput({
 		}
 	};
 
-	const remainingChars = maxChars
-		? maxChars - inputValue.length
-		: undefined;
-	const hasReachedMaxChars
-        = maxChars && inputValue.length >= maxChars;
+	const remainingChars = maxChars ? maxChars - inputValue?.length : undefined;
+	const hasReachedMaxChars = maxChars && inputValue?.length >= maxChars;
 
 	return (
 		<div className='relative w-full'>
@@ -86,7 +78,7 @@ export default function AutoCompleteInput({
 			)}
 			{hasReachedMaxChars && (
 				<div className='text-xs text-right text-red-500'>
-                    Maximum character limit reached
+					Maximum character limit reached
 				</div>
 			)}
 			{openComboBox && (
@@ -94,7 +86,8 @@ export default function AutoCompleteInput({
 					{filteredOptions.map(option => (
 						<div
 							key={option}
-							className={`px-3 py-1 cursor-pointer first:rounded-t-md last:rounded-b-md hover:bg-primary ${option === selectedOption ? 'bg-primary text-white' : ''
+							className={`px-3 py-1 cursor-pointer first:rounded-t-md last:rounded-b-md hover:bg-primary ${
+								option === selectedOption ? 'bg-primary text-white' : ''
 							}`}
 							onClick={() => {
 								finishAutoComplete(option);

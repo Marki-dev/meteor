@@ -95,6 +95,27 @@ router.post('/register', async (req, res) => {
         email: user.email,
         avatar: user.avatar,
     })
+
+    // Set Up user defaults
+
+    // first default embed
+    const embed = await req.db.embed.create({
+        data: {
+            enabled: true,
+            name: "Default Embed",
+            title: "Upload {{upload.id}}",
+            description: "Uploaded by {{user.username}}",
+            color: "#7289DA",
+            author: "Meteor",
+            user: {
+                connect: {
+                    id: user.id
+                }
+            }
+        }
+    })
+
+            
 })
 
 
