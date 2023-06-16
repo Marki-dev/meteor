@@ -7,7 +7,7 @@ import { WebAuthHandler } from "../../middleware/auth";
 
 const router = Router();
 
-
+  
 /**
  * @route   POST /register
  * ? Account Registration Route
@@ -16,7 +16,7 @@ const router = Router();
  * @returns {String} @cookie Registered Account Token = METEOR_WEB_TOKEN
  * * This route is designed to let a user register an account
 */
-router.post("/register", async (req, res) => {
+router.post('/register', async (req, res) => {
     const userAgent = req.headers["user-agent"] || "Unknown"
     const ip = req.headers["x-forwarded-for"] as string || req.socket.remoteAddress || "Unknown"
 

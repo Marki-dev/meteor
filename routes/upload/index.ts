@@ -30,6 +30,16 @@ router.post("/", async (req, res) => {
 
     let files = req.files?.file
     if (!req.files || !files) return res.status(400).json({ error: "No files were uploaded." });
+
+    if (!Array.isArray(files)) files = [files]
+
+    const response = [
+        {
+            url: `https:///i/hotGayFurryShit`,
+        }
+    ]
+
+    res.json(response.length === 1 ? response[0] : response)
 })
 
 

@@ -13,16 +13,20 @@ datasource db {
 model Self {
   id           Int     @id @default(autoincrement())
   masterDomain String?
+  telemetry    Boolean @default(true)
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  username    String     @unique
-  email       String     @unique
-  password    String
-  avatar      String?
-  uploadToken String     @unique
-  tokens      WebToken[]
+  id           Int     @id @default(autoincrement())
+  username     String  @unique
+  email        String  @unique
+  password     String
+  avatar       String?
+  uploadToken  String  @unique
+  activeDomain String  @default("{{baseDomain}}}")
+
+  domains Domain[]
+  tokens  WebToken[]
 
   embeds Embed[]
 
@@ -49,4 +53,11 @@ model Embed {
   id     Int  @id @default(autoincrement())
   user   User @relation(fields: [userId], references: [id])
   userId Int
+}
+
+model Domain {
+  id     Int    @id @default(autoincrement())
+  domain String @unique
+
+  users User[]
 }

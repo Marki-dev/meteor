@@ -1,53 +1,65 @@
-import MeteorFetch from "@/util/web/MeteorFetch";
-import { User } from "@prisma/client";
-import { useRouter } from "next/router";
+import MeteorFetch from '@/util/web/MeteorFetch';
+import { type User } from '@prisma/client';
+import { useRouter } from 'next/router';
 import {
-    createContext,
-    Dispatch,
-    ReactNode,
-    SetStateAction,
-    useState,
-    useEffect
-} from "react";
+	createContext,
+	type Dispatch,
+	type ReactNode,
+	type SetStateAction,
+	useState,
+	useEffect,
+} from 'react';
 
 // Extend User type to include the new fields
 
 export type UserContextType = {
-    user: User | null;
-    setUser: Dispatch<SetStateAction<User | null>>
-    error: string;
+	user: User | undefined;
+	setUser: Dispatch<SetStateAction<User | undefined>>;
+	error: string;
 
-    logout: () => void;
+	logout: () => void;
 };
-export const UserContext = createContext<UserContextType | null>(null);
+export const UserContext = createContext<UserContextType | undefined>(
+	undefined
+);
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
-    const router = useRouter()
+	const router = useRouter();
 
-    const [user, setUser] = useState<User | null>(null)
-    const [error, setError] = useState<string>("")
+	const [user, setUser] = useState<User | undefined>(undefined);
+	const [error, setError] = useState<string>('');
 
-    useEffect(() => {
-        setError("")
-        MeteorFetch("/me").then((res) => {
-            if (res.error) {
-                setError(res.error)
-                return console.error(res.error)
-            }
-            setUser(res)
-        })
-    }, [])
+	useEffect(() => {
+		setError('');
+		void MeteorFetch('/me').then(res => {
+			if (res.error) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+				setError(res.error ?? '');
+				console.error(res.error);
+				return;
+			}
 
-    async function logout() {
-        const res = await MeteorFetch("/auth/logout", { method: "POST" })
-        if (res.error) return console.error(res.error)
-        setUser(null)
-        router.push("/login")
-        return true
-    }
-    return (
-        <UserContext.Provider value={{ user, setUser, error, logout }}>
-            {children}
-        </UserContext.Provider>
-    );
+			console.log(res);
+			setUser(res as User);
+		});
+	}, []);
+
+	async function logout() {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		const res = await MeteorFetch('/auth/logout', { method: 'POST' });
+		if (res.error) {
+			console.error(res.error);
+			return;
+		}
+
+		setUser(undefined);
+		await router.push('/login');
+		return true;
+	}
+
+	return (
+		<UserContext.Provider value={{ user, setUser, error, logout }}>
+			{children}
+		</UserContext.Provider>
+	);
 }

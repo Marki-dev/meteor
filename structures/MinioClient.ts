@@ -10,7 +10,7 @@ export class MinioClient {
         this.client = new Client(options);
         this.bucket = process.env.S3_BUCKET || "uploads"
 
-        this.checkBucket();
+        // this.checkBucket();
     }
 
     async checkBucket() {

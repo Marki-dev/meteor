@@ -7,204 +7,262 @@ import { FaCheckCircle } from 'react-icons/fa';
 import Input from '@/components/reusable/Input';
 
 type ConfigType = {
-    app_attribution?: boolean;
-    app_mode?: "s3" | "filesystem";
-    // Credentials
-    app_username?: string;
-    app_password?: string;
-    // S3
-    s3_endpoint?: string;
-    s3_access_key?: string;
-    s3_secret_key?: string;
-    s3_use_ssl?: boolean;
-}
+	app_attribution?: boolean;
+	app_mode?: 's3' | 'filesystem';
+	// Credentials
+	app_username?: string;
+	app_password?: string;
+	// S3
+	s3_endpoint?: string;
+	s3_access_key?: string;
+	s3_secret_key?: string;
+	s3_use_ssl?: boolean;
+};
 
 export default function ConfigFlow() {
-    const [config, setConfig] = useState<ConfigType>({
+	const [config, setConfig] = useState<ConfigType>({});
+	function changeConfig(key: keyof ConfigType, value: any) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+		setConfig({ ...config, [key]: value });
+		console.log(config);
+	}
 
-    })
-    function changeConfig(key: keyof ConfigType, value: any) {
-        setConfig({ ...config, [key]: value })
-        console.log(config)
-    }
-    function submit() {
-        if (!config.app_attribution) return
-    }
-    return (
-        <div className="relative">
-            <NavBar />
-            <div className="meteor-login-bg" />
-            <div className="full-screen flex justify-center items-center">
-                <div className="bg-secondary rounded-lg p-10 shadow-2xl w-[80%] md:max-w-[30vw]">
-                    <Animator>
-                        <div className="flex justify-center items-center flex-col gap-y-5">
-                            <p>Welcome to Meteor, the finest open-source ShareX uploader in a box (thanks to Docker).</p>
-                            <p>As it seems that this is your first time accessing this dashboard after installing Meteor, we need to do a bit of setup before we can get started.</p>
-                        </div>
-                        <div className="flex justify-center items-center flex-col gap-y-5">
-                            <p>Firstly, we need to discuss modifying this app.</p>
-                            <p>Personally, I don't mind if you alter the branding, color scheme, or even add or modify features to fit your needs. However, I request that you not remove the attribution displayed on the bottom left of the page. I spent a great deal of time creating this app, and I would like people to know who built it – Thyke.</p>
-                            {config.app_attribution === false && (
-                                <p className='text-red-500 font-black'>Please Acknowlage the Attribution</p>
-                            )}
-                            <Checkbox onChange={(b) => (changeConfig("app_attribution", b))} label='I will not modify the Attribution' />
-                        </div>
-                        {/* Login Credentials */}
-                        <div className="flex justify-center items-center flex-col gap-y-5">
-                            <p>Login Credentials</p>
-                            <p>Enter the credentials you would like to use to access the dashboard. (This will also be the ADMINISTRATOR account)</p>
-                            <div className="flex justify-center items-center flex-col gap-y-5">
-                                <Input placeholder='Username' onChange={(val) => changeConfig("app_username", val)} />
-                                <Input type='password' placeholder='Password' onChange={(val) => changeConfig("app_password", val)} />
-                            </div>
-                        </div>
-                        <div className="flex justify-center items-center flex-col gap-y-5">
-                            <p>Setup Complete</p>
-                            {/* Reboot Button */}
-                            <button onClick={submit} className="bg-green-500 rounded-lg p-3 w-[80%] md:max-w-[30vw]">Crash a Meteor!</button>
+	function submit() {
+		if (!config.app_attribution) {
+			return true;
+		}
+	}
 
-                        </div>
-                    </Animator>
-                </div>
-            </div>
-        </div>
-
-    )
+	return (
+		<div className='relative'>
+			<NavBar />
+			<div className='meteor-login-bg' />
+			<div className='full-screen flex justify-center items-center'>
+				<div className='bg-secondary rounded-lg p-10 shadow-2xl w-[80%] md:max-w-[30vw]'>
+					<Animator>
+						<div className='flex justify-center items-center flex-col gap-y-5'>
+							<p>
+								Welcome to Meteor, the finest open-source ShareX uploader in a
+								box (thanks to Docker).
+							</p>
+							<p>
+								As it seems that this is your first time accessing this
+								dashboard after installing Meteor, we need to do a bit of setup
+								before we can get started.
+							</p>
+						</div>
+						<div className='flex justify-center items-center flex-col gap-y-5'>
+							<p>Firstly, we need to discuss modifying this app.</p>
+							<p>
+								Personally, I don't mind if you alter the branding, color
+								scheme, or even add or modify features to fit your needs.
+								However, I request that you not remove the attribution displayed
+								on the bottom left of the page. I spent a great deal of time
+								creating this app, and I would like people to know who built it
+								– Thyke.
+							</p>
+							{config.app_attribution === false && (
+								<p className='text-red-500 font-black'>
+									Please Acknowlage the Attribution
+								</p>
+							)}
+							<Checkbox
+								onChange={b => {
+									changeConfig('app_attribution', b);
+								}}
+								label='I will not modify the Attribution'
+							/>
+						</div>
+						{/* Login Credentials */}
+						<div className='flex justify-center items-center flex-col gap-y-5'>
+							<p>Login Credentials</p>
+							<p>
+								Enter the credentials you would like to use to access the
+								dashboard. (This will also be the ADMINISTRATOR account)
+							</p>
+							<div className='flex justify-center items-center flex-col gap-y-5'>
+								<Input
+									placeholder='Username'
+									onChange={val => {
+										changeConfig('app_username', val);
+									}}
+								/>
+								<Input
+									type='password'
+									placeholder='Password'
+									onChange={val => {
+										changeConfig('app_password', val);
+									}}
+								/>
+							</div>
+						</div>
+						<div className='flex justify-center items-center flex-col gap-y-5'>
+							<p>Setup Complete</p>
+							{/* Reboot Button */}
+							<button
+								onClick={submit}
+								className='bg-green-500 rounded-lg p-3 w-[80%] md:max-w-[30vw]'
+							>
+								Crash a Meteor!
+							</button>
+						</div>
+					</Animator>
+				</div>
+			</div>
+		</div>
+	);
 }
-
 
 type ApplicationModeProps = {
-    items: {
-        name: string
-        description: string,
-        value: string
-    }[]
-    onChange?: (d: string) => void
-}
+	items: Array<{
+		name: string;
+		description: string;
+		value: string;
+	}>;
+	onChange?: (d: string) => void;
+};
 
 function ApplicationMode({ items, onChange }: ApplicationModeProps) {
-    const [selected, setSelected] = useState(items[0])
+	const [selected, setSelected] = useState(items[0]);
 
-    function handleChange(d: any) {
-        setSelected(d)
-        onChange && onChange(d)
-    }
-    return (
-        <RadioGroup value={selected} onChange={handleChange}>
-            <div className="space-y-2">
-                {items.map((item) => (
-                    <RadioGroup.Option
-                        key={item.name}
-                        value={item.value}
-                        className={({ active, checked }) =>
-                            `${active
-                                ? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300'
-                                : ''
-                            }
-                    ${checked ? 'bg-primary' : 'bg-x3'
-                            }
+	function handleChange(d: any) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		setSelected(d);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		onChange?.(d);
+	}
+
+	return (
+		<RadioGroup value={selected} onChange={handleChange}>
+			<div className='space-y-2'>
+				{items.map(item => (
+					<RadioGroup.Option
+						key={item.name}
+						value={item.value}
+						className={({ active, checked }) =>
+							`${
+								active
+									? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300'
+									: ''
+							}
+                    ${checked ? 'bg-primary' : 'bg-x3'}
                       relative flex rounded-lg px-5 py-4 shadow-md focus:outline-none`
-                        }
-                    >
-                        {({ active, checked }) => (
-                            <>
-                                <div className="flex w-full items-center justify-between">
-                                    <div className="flex items-center w-3/4">
-                                        <div className="text-sm">
-                                            <RadioGroup.Label
-                                                as="p"
-                                                className={`font-medium `}
-                                            >
-                                                {item.name}
-                                            </RadioGroup.Label>
-                                            <RadioGroup.Description
-                                                as="span"
-                                                className={`inline`}
-                                            >
-                                                {item.description}
-                                            </RadioGroup.Description>
-                                        </div>
-                                    </div>
-                                    {checked && (
-                                        <div className="shrink-0 text-white">
-                                            <FaCheckCircle className="h-6 w-6" />
-                                        </div>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                    </RadioGroup.Option>
-                ))}
-            </div>
-        </RadioGroup>
-    )
+						}
+					>
+						{({ active, checked }) => (
+							<>
+								<div className='flex w-full items-center justify-between'>
+									<div className='flex items-center w-3/4'>
+										<div className='text-sm'>
+											<RadioGroup.Label as='p' className={'font-medium '}>
+												{item.name}
+											</RadioGroup.Label>
+											<RadioGroup.Description as='span' className={'inline'}>
+												{item.description}
+											</RadioGroup.Description>
+										</div>
+									</div>
+									{checked && (
+										<div className='shrink-0 text-white'>
+											<FaCheckCircle className='h-6 w-6' />
+										</div>
+									)}
+								</div>
+							</>
+						)}
+					</RadioGroup.Option>
+				))}
+			</div>
+		</RadioGroup>
+	);
 }
 
 function Animator({ children }: { children: React.ReactNode[] }) {
-    const [currentStep, setCurrentStep] = useState(1);
+	const [currentStep, setCurrentStep] = useState(1);
 
-    const handleNextStep = () => {
-        setCurrentStep(currentStep + 1);
-    };
+	const handleNextStep = () => {
+		setCurrentStep(currentStep + 1);
+	};
 
-    const handlePrevStep = () => {
-        setCurrentStep(currentStep - 1);
-    };
-    console.log(children)
+	const handlePrevStep = () => {
+		setCurrentStep(currentStep - 1);
+	};
 
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className='relative'
-        >
-            <p className='font-black text-xl'>{currentStep}/{children.filter(c => !!c).length}</p>
-            {/* Filter CHildren so that if any of em are false, they wont be rendered */}
-            {children.filter((c) => c)?.map((child, index) => {
-                if (!child) return null;
-                return (
-                    <ConfigStep title={`Step ${index + 1}`} isActive={currentStep === index + 1}>
-                        <div className='w-full flex justify-center'>
-                            <h1 className="text-6xl font-bold text-white meteor-text text-center">Meteor</h1>
-                        </div>
+	console.log(children);
 
-                        {child}
-                    </ConfigStep>
-                )
-            })}
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			transition={{ duration: 1 }}
+			className='relative'
+		>
+			<p className='font-black text-xl'>
+				{currentStep}/{children.filter(c => Boolean(c)).length}
+			</p>
+			{/* Filter CHildren so that if any of em are false, they wont be rendered */}
+			{children
+				.filter(c => c)
+				?.map((child, index) => {
+					if (!child) {
+						return null;
+					}
 
-            <div className='flex justify-between mt-10'>
-                <button className='bg-gray-500 p-2 rounded-md disabled:cursor-not-allowed' disabled={currentStep === 1} onClick={handlePrevStep}>
-                    Previous
-                </button>
-                <button className='bg-blue-500 p-2 rounded-md disabled:cursor-not-allowed' disabled={currentStep === children.filter(c => !!c).length} onClick={handleNextStep}>
-                    Next
-                </button>
+					return (
+						<ConfigStep
+							title={`Step ${index + 1}`}
+							isActive={currentStep === index + 1}
+						>
+							<div className='w-full flex justify-center'>
+								<h1 className='text-6xl font-bold text-white meteor-text text-center'>
+									Meteor
+								</h1>
+							</div>
 
-            </div>
-        </motion.div>
-    );
+							{child}
+						</ConfigStep>
+					);
+				})}
+
+			<div className='flex justify-between mt-10'>
+				<button
+					className='bg-gray-500 p-2 rounded-md disabled:cursor-not-allowed'
+					disabled={currentStep === 1}
+					onClick={handlePrevStep}
+				>
+					Previous
+				</button>
+				<button
+					className='bg-blue-500 p-2 rounded-md disabled:cursor-not-allowed'
+					disabled={currentStep === children.filter(c => Boolean(c)).length}
+					onClick={handleNextStep}
+				>
+					Next
+				</button>
+			</div>
+		</motion.div>
+	);
 }
 
-
-interface ConfigStepProps {
-    title: string;
-    children: React.ReactNode;
-    isActive: boolean;
-}
-
-const ConfigStep: React.FC<ConfigStepProps> = ({ title, children, isActive }) => {
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 50 }}
-            transition={{ duration: 0.3 }}
-            style={{ display: isActive ? 'block' : 'none' }}
-        >
-            {children}
-        </motion.div>
-    );
+type ConfigStepProps = {
+	title: string;
+	children: React.ReactNode;
+	isActive: boolean;
 };
+
+const ConfigStep: React.FC<ConfigStepProps> = ({
+	title,
+	children,
+	isActive,
+}) => (
+	<motion.div
+		initial={{ opacity: 0, x: -50 }}
+		animate={{ opacity: 1, x: 0 }}
+		exit={{ opacity: 0, x: 50 }}
+		transition={{ duration: 0.3 }}
+		style={{ display: isActive ? 'block' : 'none' }}
+	>
+		{children}
+	</motion.div>
+);

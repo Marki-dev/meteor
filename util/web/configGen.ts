@@ -17,7 +17,7 @@ const configs: Record<string, configType> = {
 
     sharex: {
         "Version": "13.1.0",
-        "Name": "MeteorUploader",
+		"Name": "MeteorUploader",
         "DestinationType": "ImageUploader, FileUploader",
         "RequestMethod": "POST",
         "RequestURL": "https://{{domain}}/api/upload",
@@ -71,7 +71,7 @@ export default function getConfig(name: string, replace?: [string, string][]): R
         throw new Error(`Config ${name} not found`);
     }
     let currentConfig = configs[name];
-    console.log(currentConfig);
+    console.log(currentConfig)
     // Handle Replace
     let configStr = JSON.stringify(currentConfig);
     if (replace) {

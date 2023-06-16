@@ -1,17 +1,16 @@
-import { useEffect } from 'react'
-import { useRouter } from 'next/router'
-import MeteorFetch from '@/util/web/MeteorFetch'
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import MeteorFetch from '@/util/web/MeteorFetch';
 
 export default function RedirectToDashboard() {
-  const router = useRouter()
+	const router = useRouter();
 
-  useEffect(() => {
-    MeteorFetch("/api/config/status").then((body) => {
-      console.log(body)
-      router.push(body.goTo)
-    })
-  }, [])
+	useEffect(() => {
+		void MeteorFetch('/api/config/status').then(body => {
+			console.log(body);
+			void router.push(body.goTo as string);
+		});
+	}, []);
 
-  return null
+	return null;
 }
-
