@@ -56,17 +56,22 @@ export default function EmbedConfig() {
 	}, []);
 
 	function fetchEmbeds() {
-		MeteorFetch('/me/embeds', {
+		void MeteorFetch('/me/embeds', {
 			method: 'GET',
 		}).then(embeds => {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			setUserEmbeds(embeds);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			setMasterEmbed(embeds[0]);
 		});
 	}
 
 	function handleEmbedSelect(embedName: string) {
 		const embed = userEmbeds.find(e => e.name === embedName);
-		if (!embed) return;
+		if (!embed) {
+			return;
+		}
+
 		setMasterEmbed(embed);
 	}
 
@@ -112,7 +117,9 @@ export default function EmbedConfig() {
 	return (
 		<>
 			<CreateEmbedModal
-				setClose={() => setCreateModal(false)}
+				setClose={() => {
+					setCreateModal(false);
+				}}
 				open={createModal}
 			/>
 			<div className='grid grid-cols-2 gap-10 h-full'>
@@ -127,7 +134,9 @@ export default function EmbedConfig() {
 						<SelectorDropdown
 							options={userEmbeds.map((e, i) => e.name)}
 							onSelect={handleEmbedSelect}
-							onCreate={() => setCreateModal(true)}
+							onCreate={() => {
+								setCreateModal(true);
+							}}
 						/>
 					</div>
 					<div className='grid grid-cols-2 gap-3'>
@@ -278,6 +287,7 @@ function CreateEmbedModal({ open, setClose }: ModalProps) {
 	const [createdEmbedName, setCreatedEmbedName] = useState('');
 
 	const handleOverlayClick = (event: any) => {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		if (event.target.classList.contains('overlay')) {
 			setClose();
 		}
@@ -300,7 +310,9 @@ function CreateEmbedModal({ open, setClose }: ModalProps) {
 								className='bg-primary-light p-2 rounded-lg w-full'
 								placeholder='Embed Name'
 								value={createdEmbedName}
-								onChange={e => setCreatedEmbedName(e.target.value)}
+								onChange={e => {
+									setCreatedEmbedName(e.target.value);
+								}}
 							/>
 						</div>
 					</div>
@@ -320,9 +332,11 @@ function SelectorDropdown({
 	onSelect,
 	options,
 }: SelectorDropdownProps) {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const [selectedItem, setSelectedItem] = useState(options[0]);
 	const [isOpen, setIsOpen] = useState(false);
-	const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	const handleDropdownToggle = () => {
 		setIsOpen(!isOpen);
@@ -335,7 +349,8 @@ function SelectorDropdown({
 	};
 
 	const handleOutsideClick = (event: any) => {
-		if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		if (dropdownRef.current && !dropdownRef?.current?.contains?.(event.target)) {
 			setIsOpen(false);
 		}
 	};
@@ -379,7 +394,9 @@ function SelectorDropdown({
 						{options.map((item, index) => (
 							<div
 								key={index}
-								onClick={() => handleItemClick(item)}
+								onClick={() => {
+									handleItemClick(item);
+								}}
 								className='cursor-pointer py-1 hover:bg-x3 duration-500 p-3 rounded-md`'
 							>
 								{item}

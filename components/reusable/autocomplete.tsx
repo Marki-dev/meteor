@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 import { type ChangeEventHandler, useState, useEffect } from 'react';
 
 type AutocompleteProps = {
@@ -54,7 +55,9 @@ export default function AutoCompleteInput({
 		}
 	};
 
-	const remainingChars = maxChars ? maxChars - inputValue?.length : undefined;
+	const remainingChars = maxChars
+		? maxChars - Number(inputValue?.length)
+		: undefined;
 	const hasReachedMaxChars = maxChars && inputValue?.length >= maxChars;
 
 	return (
