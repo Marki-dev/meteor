@@ -4,8 +4,15 @@ import TwitterPreview from '../TwitterPreview';
 import checkObjectDifference from '@/util/universal/checkObjectDifference';
 import AutoCompleteInput from '@/components/reusable/autocomplete';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaChevronDown, FaPlus, FaSave, FaUndo } from 'react-icons/fa';
+import {
+	FaChevronDown,
+	FaPlus,
+	FaSave,
+	FaTruckLoading,
+	FaUndo,
+} from 'react-icons/fa';
 import MeteorFetch from '@/util/web/MeteorFetch';
+import Input from '@/components/reusable/Input';
 
 type EmbedType = {
 	name: string;
@@ -85,7 +92,12 @@ export default function EmbedConfig() {
 	}
 
 	function saveEmbed() {
-		console.log('Saving embed', embed);
+		void MeteorFetch('/me/embeds', {
+			method: 'POST',
+			body: JSON.stringify(embed),
+		}).then(() => {
+			fetchEmbeds();
+		});
 	}
 
 	function updateEmbed(key: keyof EmbedType, value: string | boolean) {
@@ -120,6 +132,7 @@ export default function EmbedConfig() {
 				setClose={() => {
 					setCreateModal(false);
 				}}
+				refetch={fetchEmbeds}
 				open={createModal}
 			/>
 			<div className='grid grid-cols-2 gap-10 h-full'>
@@ -282,15 +295,41 @@ export default function EmbedConfig() {
 type ModalProps = {
 	open: boolean;
 	setClose: () => void;
+	refetch: () => void;
 };
-function CreateEmbedModal({ open, setClose }: ModalProps) {
+
+function CreateEmbedModal({ open, setClose, refetch }: ModalProps) {
+	const [loading, setLoading] = useState(false);
 	const [createdEmbedName, setCreatedEmbedName] = useState('');
+
+	function createEmbed(name: string) {
+		const embed = {
+			name,
+		};
+		setLoading(true);
+		// Perform the embed creation logic here
+		void MeteorFetch('/me/embeds/', {
+			method: 'POST',
+			body: JSON.stringify(embed),
+		}).then(() => {
+			setLoading(false);
+			setCreatedEmbedName('');
+			setClose();
+			refetch();
+		});
+	}
 
 	const handleOverlayClick = (event: any) => {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		if (event.target.classList.contains('overlay')) {
 			setClose();
 		}
+	};
+
+	const handleCreateButtonClick = (event: React.MouseEvent) => {
+		event.stopPropagation(); // Prevent the click event from propagating to the overlay
+		createEmbed(createdEmbedName);
+		setClose();
 	};
 
 	return (
@@ -305,15 +344,19 @@ function CreateEmbedModal({ open, setClose }: ModalProps) {
 				>
 					<div className='bg-primary rounded-lg shadow-lg p-5'>
 						<p className='text-2xl font-bold'>Create Embed</p>
-						<div className='flex items-center justify-between mt-5'>
-							<input
-								className='bg-primary-light p-2 rounded-lg w-full'
+						<div className='flex items-center justify-between mt-5 gap-2'>
+							<Input
 								placeholder='Embed Name'
-								value={createdEmbedName}
 								onChange={e => {
-									setCreatedEmbedName(e.target.value);
+									setCreatedEmbedName(e);
 								}}
 							/>
+							<button
+								className='bg-green-500 hover:bg-opacity-80 p-2.5 rounded-lg'
+								onClick={handleCreateButtonClick}
+							>
+								{loading ? <FaTruckLoading /> : 'Create'}
+							</button>
 						</div>
 					</div>
 				</motion.div>
@@ -349,8 +392,11 @@ function SelectorDropdown({
 	};
 
 	const handleOutsideClick = (event: any) => {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		if (dropdownRef.current && !dropdownRef?.current?.contains?.(event.target)) {
+		if (
+			dropdownRef.current &&
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			!dropdownRef?.current?.contains?.(event.target)
+		) {
 			setIsOpen(false);
 		}
 	};
@@ -397,7 +443,7 @@ function SelectorDropdown({
 								onClick={() => {
 									handleItemClick(item);
 								}}
-								className='cursor-pointer py-1 hover:bg-x3 duration-500 p-3 rounded-md`'
+								className='cursor-pointer py-1 hover:bg-x3 duration-500 p-3 rounded-md'
 							>
 								{item}
 							</div>
