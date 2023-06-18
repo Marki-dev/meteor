@@ -21,7 +21,8 @@ const db = new PrismaClient();
 
 const minioClient = new MinioClient({
 	endPoint: process.env.S3_ENDPOINT ?? '',
-	port: parseInt(process.env.S3_PORT ?? '9000', 10),
+	port: Number(process.env.S3_PORT ?? '9000'),
+	useSSL: process.env.S3_USE_SSL === 'true',
 	accessKey: process.env.S3_ACCESS_KEY ?? '',
 	secretKey: process.env.S3_SECRET_KEY ?? ''
 });

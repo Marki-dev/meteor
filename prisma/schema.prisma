@@ -27,8 +27,8 @@ model User {
 
   domains Domain[]
   tokens  WebToken[]
-
-  embeds Embed[]
+  embeds  Embed[]
+  uploads Upload[]
 
   // Tracking Data
   created_at DateTime @default(now())
@@ -69,4 +69,19 @@ model Domain {
   domain String @unique
 
   users User[]
+}
+
+model Upload {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  shortId String @unique
+
+  key      String
+  filename String
+
+  // Tracking Data
+  created_at DateTime @default(now())
+  views      Int      @default(0)
 }
