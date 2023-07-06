@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import MeteorFetch from '@/util/web/MeteorFetch';
 import Input from '@/components/reusable/Input';
+import { useUser } from '@/hooks/UserHook';
 
 export type EmbedType = {
 	id?: string;
@@ -45,6 +46,7 @@ const AutocompleteOptions = [
 ];
 
 export default function EmbedConfig() {
+	const user = useUser();
 	const [userEmbeds, setUserEmbeds] = useState<EmbedType[]>([]);
 	const [embed, setEmbed] = useState<EmbedType | undefined>(undefined);
 	const [firstEmbed, setFirstEmbed] = useState<EmbedType>();
@@ -90,6 +92,7 @@ export default function EmbedConfig() {
 			body: JSON.stringify(embed),
 		}).then(() => {
 			fetchEmbeds();
+			setFirstEmbed(embed);
 		});
 	}
 
@@ -111,6 +114,7 @@ export default function EmbedConfig() {
 			<DiscordPreview
 				username='Thykie'
 				avatar='https://avatars.githubusercontent.com/u/45541936?v=4t'
+				domain={user?.user?.activeDomain}
 				embed={embed}
 			/>
 		),
@@ -118,6 +122,7 @@ export default function EmbedConfig() {
 			<TwitterPreview
 				avatar='https://avatars.githubusercontent.com/u/45541936?v=4t'
 				username='Thykie'
+				domain={user?.user?.activeDomain}
 				embed={embed}
 			/>
 		),
@@ -125,7 +130,7 @@ export default function EmbedConfig() {
 	type tabsType = keyof typeof tabs;
 	const [currentTab, setTab] = useState<tabsType>('Discord');
 
-	const openSaveModal = checkObjectDifference(firstEmbed, embed);
+	const openSaveModal = checkObjectDifference(firstEmbed ?? {}, embed ?? {});
 
 	return (
 		<>
