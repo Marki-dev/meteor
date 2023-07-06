@@ -25,10 +25,16 @@ model User {
   uploadToken  String  @unique
   activeDomain String  @default("{{baseDomain}}}")
 
-  domains Domain[]
-  tokens  WebToken[]
+  domains      Domain[]
+  tokens       WebToken[]
+  embeds       Embed[]
+  uploads      Upload[]
+  shortendURLs ShortendUrl[]
 
-  embeds Embed[]
+  // Account Configuration
+  admin     Boolean @default(false)
+  verified  Boolean @default(false)
+  suspended Boolean @default(false)
 
   // Tracking Data
   created_at DateTime @default(now())
@@ -50,9 +56,18 @@ model WebToken {
 }
 
 model Embed {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
   userId Int
+
+  // Embed Data
+  enabled     Boolean @default(true)
+  title       String?
+  description String?
+  provider    String?
+  author      String?
+  color       String?
 }
 
 model Domain {
@@ -60,4 +75,33 @@ model Domain {
   domain String @unique
 
   users User[]
+}
+
+model Upload {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  shortId String @unique
+
+  key      String
+  filename String
+
+  // Tracking Data
+  created_at DateTime @default(now())
+  views      Int      @default(0)
+}
+
+model ShortendUrl {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  shortId String @unique
+  url     String
+
+  // Tracking Data
+  created_at DateTime @default(now())
+  last_viewed DateTime?
+  views      Int      @default(0)
 }

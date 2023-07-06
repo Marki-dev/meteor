@@ -1,9 +1,7 @@
-import { Router } from "express";
-import os from "os";
-
+import { Router } from 'express';
+import os from 'os';
 
 const router = Router();
-
 
 /**
  * @route   GET /
@@ -13,11 +11,10 @@ const router = Router();
  * * This route is designed for the front-end to figure out where the main page needs
  * * to send the user to
 */
-router.get("/", (req, res) => {
-    res.json({
-        goTo: "/config/setup"
-    })
-})
-
+router.get('/', (req, res) => {
+	res.json({
+		goTo: '/config/setup'
+	});
+});
 
 export default router;

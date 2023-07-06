@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MARIADB_ROOT_PASSWORD: "gwidstNKp9divsc4fwqfSqcTun2ZmSP5WERHs2WzrEERNt"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - '27017:27017'
+      - '27018:27018'
+      - '27019:27019'
+      - '27020:27020'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: '6sYXhop8Uo4HYKjNQCW^v34y%VoToY3CzTx8@*m9BsbdwA'
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+
+  influxdb:
+    image: influxdb
+    restart: always
+    ports:
+      - '8086:8086'
+    environment:
+      - INFLUXDB_DB=influx
+      - INFLUXDB_ADMIN_USER=root
+      - INFLUXDB_ADMIN_PASSWORD=aeaeaeae
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+
+volumes:
+  mariadb_data:
+  mongo_data:
+  influxdb_data:

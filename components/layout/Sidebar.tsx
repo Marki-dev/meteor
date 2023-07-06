@@ -1,9 +1,22 @@
 import Link from 'next/link';
-import {useRef, useEffect} from 'react';
-import {FaCogs, FaHome, FaUpload, FaUsersCog, FaWrench} from 'react-icons/fa';
-import {type IconType} from 'react-icons/lib';
+import { useRef, useEffect } from 'react';
+import {
+	FaCogs,
+	FaExternalLinkAlt,
+	FaHome,
+	FaUpload,
+	FaUsersCog,
+	FaWrench,
+} from 'react-icons/fa';
+import { type IconType } from 'react-icons/lib';
 
-export default function SideBar({set, show}: {set: (val: boolean) => void; show: boolean}) {
+export default function SideBar({
+	set,
+	show,
+}: {
+	set: (val: boolean) => void;
+	show: boolean;
+}) {
 	const sidebarRef = useRef<HTMLDivElement>(null);
 	const options = [
 		{
@@ -20,11 +33,15 @@ export default function SideBar({set, show}: {set: (val: boolean) => void; show:
 					link: '/app/uploads',
 				},
 				{
+					name: 'URL Shortener',
+					icon: FaExternalLinkAlt,
+					link: '/app/shortener',
+				},
+				{
 					name: 'Settings',
 					icon: FaCogs,
 					link: '/app/settings',
 				},
-
 			],
 		},
 		{
@@ -37,11 +54,13 @@ export default function SideBar({set, show}: {set: (val: boolean) => void; show:
 				},
 			],
 		},
-
 	];
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
-			if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+			if (
+				sidebarRef.current &&
+				!sidebarRef.current.contains(event.target as Node)
+			) {
 				set(false);
 			}
 		}
@@ -55,7 +74,8 @@ export default function SideBar({set, show}: {set: (val: boolean) => void; show:
 	return (
 		<>
 			<div
-				className={`fixed left-0 top-0 w-64 h-full bg-nav py-3 pr-3 z-50 transition-transform transform mt-[4rem] ${show ? 'translate-x-0' : '-translate-x-full '
+				className={`fixed left-0 top-0 w-64 h-full bg-nav py-3 pr-3 z-50 transition-transform transform mt-[4rem] ${
+					show ? 'translate-x-0' : '-translate-x-full '
 				} lg:hidden`}
 				ref={sidebarRef}
 			>
@@ -76,7 +96,7 @@ type SideBarGroupProps = {
 	name: string;
 	items: SideBarElementProps[];
 };
-function SideBarGroup({name, items}: SideBarGroupProps) {
+function SideBarGroup({ name, items }: SideBarGroupProps) {
 	return (
 		<div className='flex flex-col gap-1'>
 			<p className='text-sm opacity-50 underline pl-1'>{name}</p>

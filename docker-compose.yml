@@ -35,14 +35,16 @@ services:
 
   minio:
     image: minio/minio
-    command: server /data
     ports:
-      - "9000:9000"
-    environment:
-      - MINIO_ACCESS_KEY=S3-ACCESS-KEY
-      - MINIO_SECRET_KEY=S3-SECRET-KEY
+      - 9000:9000
+      - 9001:9001
     volumes:
       - minio-data:/data
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_REGION_NAME: 'eu-central-1'
+    command: minio server --console-address ":9001" /data
     networks:
       - meteor-network
 
@@ -52,3 +54,4 @@ networks:
 
 volumes:
   minio-data:
+    driver: local
