@@ -82,7 +82,7 @@ If you prefer to use a cloud-provided S3 Bucket service and gain access to a CDN
 Sign up for an account with a cloud storage provider that offers an S3-compatible service (e.g., Amazon S3, DigitalOcean Spaces).
 Create a new S3 Bucket within your account.
 Obtain the access key and secret key for your S3 Bucket.
-Modify the `docker-compose.yml` file as shown above, replacing the `S3_ENDPOINT`, `S3_BUCKET`, `S3_PORT`, `S3_ACCESS_KEY`, and `S3_SECRET_KE`Y variables with the corresponding values provided by your cloud storage provider.
+Modify the `docker-compose.yml` file as shown above, replacing the `S3_ENDPOINT`, `S3_BUCKET`, `S3_PORT`, `S3_ACCESS_KEY`, and `S3_SECRET_KEY` variables with the corresponding values provided by your cloud storage provider.
 Save the changes and start the Meteor application using `docker-compose up`.
 That's it! You should now have Meteor up and running, ready to handle your file uploads with ShareX.
 
