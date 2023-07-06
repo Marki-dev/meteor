@@ -93,4 +93,30 @@ router.get('/', WebAuthHandler, async (req, res) => {
 	return res.json(dbEmbeds);
 });
 
+/**
+ * @route   DELETE /:embedId
+ * ? Delete a User Embed
+ * @access  Private
+ * @returns {Embed}
+ * * This route is designed to delete a user embed
+*/
+router.delete('/:embedId', WebAuthHandler, async (req, res) => {
+	const { embedId } = req.params;
+	const dbEmbed = await req.db.embed.findFirst({
+		where: {
+			id: Number(embedId),
+			userId: req.user?.id
+		}
+	});
+
+	if (!dbEmbed) return res.status(404).json({ error: 'Embed not found' });
+
+	await req.db.embed.delete({
+		where: {
+			id: Number(embedId)
+		}
+	});
+	return res.json(dbEmbed);
+});
+
 export default router;

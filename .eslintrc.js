@@ -30,6 +30,7 @@ module.exports = {
 		'comma-dangle': 'off',
 		'@next/next/no-img-element': 'off',
 		curly: 'off',
-		'@typescript-eslint/no-unsafe-assignment': 'off'
+		'@typescript-eslint/no-unsafe-assignment': 'off',
+		'no-inner-declarations': 'off',
 	},
 };

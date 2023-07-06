@@ -28,6 +28,7 @@ const minioClient = new MinioClient({
 });
 void db.$connect().then(() => {
 	console.log('Connected to database.');
+
 	void app.prepare().then(async () => {
 		server.use((req, _res, next) => {
 			req.minio = minioClient;

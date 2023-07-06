@@ -25,10 +25,16 @@ model User {
   uploadToken  String  @unique
   activeDomain String  @default("{{baseDomain}}}")
 
-  domains Domain[]
-  tokens  WebToken[]
-  embeds  Embed[]
-  uploads Upload[]
+  domains      Domain[]
+  tokens       WebToken[]
+  embeds       Embed[]
+  uploads      Upload[]
+  shortendURLs ShortendUrl[]
+
+  // Account Configuration
+  admin     Boolean @default(false)
+  verified  Boolean @default(false)
+  suspended Boolean @default(false)
 
   // Tracking Data
   created_at DateTime @default(now())
@@ -83,5 +89,19 @@ model Upload {
 
   // Tracking Data
   created_at DateTime @default(now())
+  views      Int      @default(0)
+}
+
+model ShortendUrl {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  shortId String @unique
+  url     String
+
+  // Tracking Data
+  created_at DateTime @default(now())
+  last_viewed DateTime?
   views      Int      @default(0)
 }

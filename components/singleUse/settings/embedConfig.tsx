@@ -5,23 +5,26 @@ import checkObjectDifference from '@/util/universal/checkObjectDifference';
 import AutoCompleteInput from '@/components/reusable/autocomplete';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+	FaCheckCircle,
 	FaChevronDown,
 	FaPlus,
 	FaSave,
+	FaTrashAlt,
 	FaTruckLoading,
 	FaUndo,
 } from 'react-icons/fa';
 import MeteorFetch from '@/util/web/MeteorFetch';
 import Input from '@/components/reusable/Input';
 
-type EmbedType = {
-	name: string;
-	enabled: boolean;
-	title: string;
-	description: string;
-	color: string;
-	author: string;
-	provider: string;
+export type EmbedType = {
+	id?: string;
+	name?: string;
+	enabled?: boolean;
+	title?: string;
+	description?: string;
+	color?: string;
+	author?: string;
+	provider?: string;
 };
 
 const AutocompleteOptions = [
@@ -42,19 +45,9 @@ const AutocompleteOptions = [
 ];
 
 export default function EmbedConfig() {
-	const empty = {
-		name: '',
-		enabled: true,
-		title: '',
-		description: '',
-		provider: '',
-		author: '',
-		color: '',
-	};
-
 	const [userEmbeds, setUserEmbeds] = useState<EmbedType[]>([]);
-	const [embed, setEmbed] = useState<EmbedType>(empty);
-	const [firstEmbed, setFirstEmbed] = useState<EmbedType>(empty);
+	const [embed, setEmbed] = useState<EmbedType | undefined>(undefined);
+	const [firstEmbed, setFirstEmbed] = useState<EmbedType>();
 
 	const [createModal, setCreateModal] = useState(false);
 
@@ -73,7 +66,7 @@ export default function EmbedConfig() {
 		});
 	}
 
-	function handleEmbedSelect(embedName: string) {
+	async function handleEmbedSelect(embedName: string) {
 		const embed = userEmbeds.find(e => e.name === embedName);
 		if (!embed) {
 			return;
@@ -100,9 +93,17 @@ export default function EmbedConfig() {
 		});
 	}
 
-	function updateEmbed(key: keyof EmbedType, value: string | boolean) {
-		console.log('aaaaaa', embed);
-		setEmbed(embed => ({ ...embed, [key]: value }));
+	function updateEmbed(
+		key: keyof EmbedType,
+		value: string | undefined | boolean
+	) {
+		setEmbed((embed: EmbedType | undefined) => {
+			if (key === 'id' && typeof value === 'undefined') {
+				return { ...embed, [key]: undefined };
+			}
+
+			return { ...embed, [key]: value };
+		});
 	}
 
 	const tabs: Record<string, JSX.Element> = {
@@ -160,7 +161,7 @@ export default function EmbedConfig() {
 							<p className='text-xs opacity-40 pl-1'>Provider</p>
 							<AutoCompleteInput
 								maxChars={256}
-								value={embed.provider}
+								value={embed?.provider}
 								onChange={v => {
 									updateEmbed('provider', v);
 								}}
@@ -172,7 +173,7 @@ export default function EmbedConfig() {
 							<p className='text-xs opacity-40 pl-1'>Author</p>
 							<AutoCompleteInput
 								maxChars={256}
-								value={embed.author}
+								value={embed?.author}
 								onChange={v => {
 									updateEmbed('author', v);
 								}}
@@ -184,7 +185,7 @@ export default function EmbedConfig() {
 							<p className='text-xs opacity-40 pl-1'>Title</p>
 							<AutoCompleteInput
 								maxChars={256}
-								value={embed.title}
+								value={embed?.title}
 								onChange={v => {
 									updateEmbed('title', v);
 								}}
@@ -198,13 +199,13 @@ export default function EmbedConfig() {
 								<input
 									className='h-full w-full bg-primary rounded-lg'
 									type='color'
-									value={embed.color}
+									value={embed?.color}
 									onChange={e => {
 										updateEmbed('color', e.target.value);
 									}}
 								/>
 								<AutoCompleteInput
-									value={embed.color}
+									value={embed?.color}
 									onChange={v => {
 										updateEmbed('color', v);
 									}}
@@ -216,7 +217,7 @@ export default function EmbedConfig() {
 							<p className='text-xs opacity-40 pl-1'>Description</p>
 							<AutoCompleteInput
 								maxChars={4096}
-								value={embed.description}
+								value={embed?.description}
 								onChange={v => {
 									updateEmbed('description', v);
 								}}
@@ -369,10 +370,12 @@ type SelectorDropdownProps = {
 	options: any[];
 	onCreate?: () => void;
 	onSelect: (item: any) => void;
+	onDelete?: (item: any) => void;
 };
 function SelectorDropdown({
 	onCreate,
 	onSelect,
+	onDelete,
 	options,
 }: SelectorDropdownProps) {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -386,9 +389,10 @@ function SelectorDropdown({
 	};
 
 	const handleItemClick = (item: any) => {
+		console.log('Selected item', item);
 		setSelectedItem(item);
-		onSelect(item);
 		setIsOpen(false);
+		onSelect(item);
 	};
 
 	const handleOutsideClick = (event: any) => {
@@ -402,8 +406,10 @@ function SelectorDropdown({
 	};
 
 	useEffect(() => {
-		setSelectedItem(options[0]);
-	}, [options]);
+		if (!options.includes(selectedItem)) {
+			setSelectedItem(options[0]);
+		}
+	}, [options, selectedItem]);
 
 	useEffect(() => {
 		document.addEventListener('mousedown', handleOutsideClick);
@@ -432,7 +438,7 @@ function SelectorDropdown({
 			<AnimatePresence>
 				{isOpen && (
 					<motion.ul
-						className='absolute z-10 right-0 mt-2 py-2 px-3 shadow-lg bg-secondary rounded-lg'
+						className='absolute z-10 right-0 mt-2 py-2 px-3 shadow-lg bg-secondary rounded-lg min-w-[15rem]'
 						initial={{ opacity: 0, y: -10 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -10 }}
@@ -443,14 +449,23 @@ function SelectorDropdown({
 								onClick={() => {
 									handleItemClick(item);
 								}}
-								className='cursor-pointer py-1 hover:bg-x3 duration-500 p-3 rounded-md'
+								className='cursor-pointer py-1 bg-x3 hover:bg-opacity-60 duration-500 p-3 first:rounded-t-md flex items-center justify-between gap-2'
 							>
 								{item}
+								{selectedItem === item && (
+									<div className='group'>
+										<FaCheckCircle className='text-green-500 group-hover:hidden' />
+										<FaTrashAlt
+											onClick={() => onDelete?.(item)}
+											className='text-red-500 hidden group-hover:flex'
+										/>
+									</div>
+								)}
 							</div>
 						))}
 						<div
 							onClick={onCreate}
-							className='cursor-pointer py-1 bg-green-500 duration-500 p-3 rounded-md hover:opacity-75 flex items-center gap-2'
+							className='cursor-pointer py-1 bg-green-500 duration-500 p-3 hover:opacity-75 flex items-center gap-2 rounded-b-md'
 						>
 							<FaPlus />
 							Create
