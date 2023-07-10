@@ -69,6 +69,5 @@ function getCurrentDate() {
 	return `${hour}:${minute} ${period} · ${month} ${day}, ${year}`;
 }
 
-console.log(getCurrentDate());
 
 export default TwitterPreview;

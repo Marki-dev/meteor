@@ -37,7 +37,6 @@ router.post('/', async (req, res) => {
 			if (!length) length = 6;
 			const id = genId(length);
 
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 			const existingShortner = await req.db.shortendUrl.findFirst({
 				where: {
 					shortId: String(id),
@@ -57,7 +56,6 @@ router.post('/', async (req, res) => {
 
 		const id = await generateUniqueShorenerID(10);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 		await req.db.shortendUrl.create({
 			data: {
 				shortId: id,
@@ -70,7 +68,6 @@ router.post('/', async (req, res) => {
 				},
 			},
 		});
-
 		res.json({
 			url: `${user?.activeDomain ?? 'aaa'}/s/${id}`,
 		});
@@ -79,48 +76,114 @@ router.post('/', async (req, res) => {
 		if (!req.files || !files) return res.status(400).json({ error: 'No files were uploaded.' });
 		if (!Array.isArray(files)) files = [files];
 		const selfRecord = await req.db.self.findFirst({});
-		const urls: string[] = [];
+		let urls: string[] = [];
 		for (const file of files) {
-			const cryptoKey = randomUUID();
-			const filename = cryptoKey + extname(file.name);
-			const key = [user.username.replace(' ', '-').toLowerCase(), filename].join('/');
-			void req.minio.putObject(key, file.data, undefined, {
-				'Content-Type': file.mimetype,
-			}).then(async upload => {
-				async function createUploadID(length = 6) {
-					const id = genId(length);
-					const upload = await req.db.upload.findFirst({
-						where: {
-							shortId: id
+			// eslint-disable-next-line no-await-in-loop, @typescript-eslint/no-loop-func
+			await new Promise(resolve => {
+				console.log(file);
+				const cryptoKey = randomUUID();
+				const filename = cryptoKey + extname(file.name);
+				const key = [user.username.replace(' ', '-').toLowerCase(), filename].join('/');
+
+				void req.minio.putObject(key, file.data, undefined, {
+					'Content-Type': file.mimetype,
+				}).then(async upload => {
+					async function createUploadID(length = 6) {
+						const id = genId(length);
+						const upload = await req.db.upload.findFirst({
+							where: {
+								shortId: id
+							}
+						});
+						if (upload) {
+							// If the ID already exists, recursively call the function to generate a new one
+							return createUploadID(length);
 						}
-					});
-					if (upload) {
-						// If the ID already exists, recursively call the function to generate a new one
-						return createUploadID(length);
+
+						return id;
 					}
 
-					return id;
-				}
-
-				const uploadId = await createUploadID();
-				const dbres = await req.db.upload.create({
-					data: {
-						shortId: uploadId,
-						key,
-						filename,
-						user: {
-							connect: {
-								id: user.id
+					const uploadId = await createUploadID();
+					const dbres = await req.db.upload.create({
+						data: {
+							shortId: uploadId,
+							key,
+							filename,
+							user: {
+								connect: {
+									id: user.id
+								}
 							}
 						}
-					}
+					});
+					const string = `${user.activeDomain ?? 'aaa'}/u/${dbres.shortId}`;
+					// Console.log(string);
+					urls = [...urls, string];
+					resolve(true);
 				});
-				urls.push(`${req.user?.activeDomain ?? 'aaa'}`);
 			});
 		}
 
-		res.json(urls.length === 1 ? urls[0] : urls);
+		res.json({
+			url: urls.length === 1 ? urls[0] : urls
+		});
 	}
+});
+
+router.get('/:id', async (req, res) => {
+	const selfRecord = await req.db.self.findFirst({});
+	const {id} = req.params;
+	if (!id) return res.status(500).json({
+		error: 'No ID Provided',
+	});
+
+	const upload = await req.db.upload.findFirst({
+		where: {
+			shortId: id
+		}
+	});
+	if (!upload?.shortId) return;
+	if (selfRecord?.proxyS3Media) {
+		console.log('A');
+		res.redirect(`/api/upload/${upload?.shortId}/file`);
+		return;
+	}
+
+	console.log('Redirecc');
+});
+router.get('/:id/data', async (req, res) => {
+	const selfRecord = await req.db.self.findFirst({});
+	const {id} = req.params;
+	if (!id) return res.status(500).json({
+		error: 'No ID Provided',
+	});
+
+	const upload = await req.db.upload.findFirst({
+		where: {
+			shortId: id
+		}
+	});
+	res.json(upload);
+});
+
+router.get('/:id/file', async (req, res) => {
+	const {id} = req.params;
+	if (!id) return res.status(500).json({
+		error: 'No ID Provided',
+	});
+
+	const upload = await req.db.upload.findFirst({
+		where: {
+			shortId: id
+		}
+	});
+
+	if (!upload) return res.json({
+		error: 'Invalid ShortId'
+	});
+
+	const file = await req.minio.getObject(upload.key);
+	file.pipe(res);
 });
 
 function genId(length: number) {

@@ -20,6 +20,51 @@ router.get('/', WebAuthHandler, async (req, res) => {
 });
 
 /**
+ * @route /api/me/uploads
+ * ? URL Parameters: from: number; to: number; limit: number;
+ * * Tis route is designed to get the current users uploads, the from/to query parameters are
+ * * there to specify what images to grab, if none are specified return the last 100 uploads
+ * * for example, if I were to specify from: 0; to:27, it should return the last 27 uploads with
+ * * the latest upload being first, but if I specify from:5; to: 27, it should return the image uploaded
+ * * fith ago, to the 27th upload
+ */
+router.get('/uploads', WebAuthHandler, async (req, res) => {
+	const { from, to, limit } = req.query;
+
+	// Parse query parameters
+	const fromIndex = from ? parseInt(from as string, 10) : 0;
+	const toIndex = to ? parseInt(to as string, 10) : 27;
+	const limitValue = limit ? parseInt(limit as string, 10) : 100;
+
+	// Validate query parameters
+	const totalUploads = await req.db.upload.count();
+	const fromItem = Math.max(0, totalUploads - fromIndex);
+	const toItem = Math.max(0, totalUploads - toIndex - 1);
+
+	try {
+		// Query uploads with pagination and filtering
+		const uploads = await req.db.upload.findMany({
+			where: {
+				created_at: {
+					gte: new Date(0),
+				},
+			},
+			skip: toItem,
+			take: Math.max(0, fromItem - toItem, limitValue),
+			orderBy: {
+				created_at: 'desc',
+			},
+		});
+
+		res.json({ uploads });
+	} catch (error) {
+		// Handle any errors that occur during the database query
+		console.error(error);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+});
+
+/**
  * @route   DELETE /
  * ? Delete Current User Route
  * @access  Private

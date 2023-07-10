@@ -394,7 +394,6 @@ function SelectorDropdown({
 	};
 
 	const handleItemClick = (item: any) => {
-		console.log('Selected item', item);
 		setSelectedItem(item);
 		setIsOpen(false);
 		onSelect(item);
