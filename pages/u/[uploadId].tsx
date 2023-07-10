@@ -5,8 +5,39 @@ import EXIF from 'exif-js';
 import MeteorFetch from '@/util/web/MeteorFetch';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FaInfo } from 'react-icons/fa';
+import { type GetServerSideProps, type GetServerSidePropsContext } from 'next';
+import Head from 'next/head';
 
-export default function FileView() {
+type PageMetaDataProps = any;
+
+export const getServerSideProps: GetServerSideProps<PageMetaDataProps> = async (
+	context: GetServerSidePropsContext
+) => {
+	const shortId = context.query.uploadId;
+	if (!shortId) return { props: {} }; // Return an empty props object or handle the case when uploadId is not provided
+
+	try {
+		const response = await fetch(`/api/upload/${shortId as string}/metagen`);
+
+		const metaData = await response.json();
+
+		const props: PageMetaDataProps = {
+			metaData, // Assign the fetched metadata to the props
+		};
+
+		return { props };
+	} catch (error) {
+		// Handle any errors that occur during server-side rendering
+		console.error(error);
+		return {
+			props: {
+				lol: true,
+			},
+		};
+	}
+};
+
+export default function FileView({ props }: { props: PageMetaDataProps }) {
 	const router = useRouter();
 	const shortId = router.query.uploadId;
 
@@ -30,7 +61,7 @@ export default function FileView() {
 
 		try {
 			const imageBuffer = await getImageBuffer(imageUrl);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
 			const tags = EXIF.readFromBinaryFile(imageBuffer);
 
 			console.log(tags);
@@ -68,6 +99,12 @@ export default function FileView() {
 
 	return (
 		<div>
+			<Head>
+				{/* <link
+					type='application/json+oembed'
+					href={`/api/upload/${shortId as string}/oembed`}
+				/> */}
+			</Head>
 			<NavBar />
 			<AnimatePresence>
 				{panelOpen && (
@@ -104,12 +141,4 @@ export default function FileView() {
 			</AnimatePresence>
 		</div>
 	);
-}
-
-type PageWrapperProps = {
-	children: ReactNode;
-};
-
-function PageWrapper({ children }: PageWrapperProps) {
-	return <div>{children}</div>;
 }

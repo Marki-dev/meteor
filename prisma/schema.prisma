@@ -26,6 +26,7 @@ model User {
   avatar       String?
   uploadToken  String  @unique
   activeDomain String  @default("{{baseDomain}}}")
+  activeEmbed  String  @default("")
 
   domains      Domain[]
   tokens       WebToken[]

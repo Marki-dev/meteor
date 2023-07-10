@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import DashboardWrapper from '@/components/layout/DashboardWrapper';
 import {
 	FaCamera,
-	FaCommentDots,
+	FaDotCircle,
 	FaFileAlt,
 	FaStickyNote,
 	FaUpload,
 } from 'react-icons/fa';
+import { BsThreeDots } from 'react-icons/bs';
 import AuthLock from '@/components/utility/AuthLock';
 import MeteorFetch from '@/util/web/MeteorFetch';
 import Link from 'next/link';
+import { getDurationSince } from '@/util/universal/getDurationSince';
+import { type Upload } from '@prisma/client';
 
 export default function MainAPPPage() {
-	const [uploads, setUploads] = useState<any[]>([]);
-
+	const [uploads, setUploads] = useState<Upload[]>([]);
+	const [stats, setStats] = useState();
 	useEffect(() => {
 		void MeteorFetch('/me/uploads').then(r => {
 			setUploads(r.uploads as any[]);
@@ -50,22 +52,27 @@ export default function MainAPPPage() {
 					))}
 				</div>
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 transition-all gap-3 my-3'>
-					{uploads.slice(0, 8).map((upload, i) => (
-						<Link href={`/u/${upload.shortId as string}`}>
+					{uploads.slice(0, 15).map((upload, i) => (
+						<Link href={`/u/${upload.shortId}`}>
 							<div className=' bg-primary p-3 rounded-lg md:justify-between hover:scale-[1.05] group duration-300'>
 								<img
-									src={`/api/upload/${upload.shortId as string}`}
+									src={`/api/upload/${upload.shortId}`}
 									alt=''
 									className='grayscale group-hover:grayscale-0 rounded-lg w-full h-48  object-none'
 								/>
 								<div className='flex justify-between items-center'>
 									<div className='flex w-1/2 items-center h-full'>
-										<p className='text-2xl font-semibold opacity-50'>
-											{upload.shortId}
-										</p>
+										<div>
+											<p className='text-xl font-bold opacity-50'>
+												{upload.shortId}
+											</p>
+											<p className='text-xs opacity-20'>
+												{getDurationSince(new Date(upload.created_at))} ago
+											</p>
+										</div>
 									</div>
 									<div className='flex items-center'>
-										<FaCommentDots className='text-3xl' />
+										<BsThreeDots className='text-3xl' />
 									</div>
 								</div>
 							</div>

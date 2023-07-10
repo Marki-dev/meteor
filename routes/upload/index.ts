@@ -186,6 +186,22 @@ router.get('/:id/file', async (req, res) => {
 	file.pipe(res);
 });
 
+/**
+ * @route /api/upload/:id/metagen
+ */
+
+router.get('/:id/metagen', async (req, res) => {
+	const {id} = req.params;
+	const upload = await req.db.upload.findFirst({
+		where: {
+			shortId: id
+		}
+	});
+	if (!upload) return res.json({
+		error: 'Upload does not exist'
+	});
+});
+
 function genId(length: number) {
 	const chars =
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

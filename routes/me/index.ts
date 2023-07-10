@@ -22,38 +22,43 @@ router.get('/', WebAuthHandler, async (req, res) => {
 /**
  * @route /api/me/uploads
  * ? URL Parameters: from: number; to: number; limit: number;
- * * Tis route is designed to get the current users uploads, the from/to query parameters are
- * * there to specify what images to grab, if none are specified return the last 100 uploads
- * * for example, if I were to specify from: 0; to:27, it should return the last 27 uploads with
- * * the latest upload being first, but if I specify from:5; to: 27, it should return the image uploaded
- * * fith ago, to the 27th upload
  */
 router.get('/uploads', WebAuthHandler, async (req, res) => {
-	const { from, to, limit } = req.query;
-
 	// Parse query parameters
-	const fromIndex = from ? parseInt(from as string, 10) : 0;
-	const toIndex = to ? parseInt(to as string, 10) : 27;
-	const limitValue = limit ? parseInt(limit as string, 10) : 100;
+	const { from, to, limit } = req.query;
+	const fromIndex = from ? parseInt(from as string, 10) : undefined;
+	const toIndex = to ? parseInt(to as string, 10) : undefined;
+	const limitValue = limit ? parseInt(limit as string, 10) : undefined;
 
 	// Validate query parameters
 	const totalUploads = await req.db.upload.count();
-	const fromItem = Math.max(0, totalUploads - fromIndex);
-	const toItem = Math.max(0, totalUploads - toIndex - 1);
+	// eslint-disable-next-line no-negated-condition
+	const fromItem = fromIndex !== undefined ? Math.max(totalUploads - fromIndex, 0) : undefined;
+	// eslint-disable-next-line no-negated-condition
+	const toItem = toIndex !== undefined ? Math.max(totalUploads - toIndex - 1, 0) : undefined;
 
 	try {
+		// Calculate the limit based on the 'from' and 'to' parameters if 'limit' is undefined
+		const calculatedLimit = limitValue ?? undefined;
+
 		// Query uploads with pagination and filtering
 		const uploads = await req.db.upload.findMany({
 			where: {
+				userId: req.user?.id,
 				created_at: {
 					gte: new Date(0),
 				},
 			},
 			skip: toItem,
-			take: Math.max(0, fromItem - toItem, limitValue),
-			orderBy: {
-				created_at: 'desc',
-			},
+			take: calculatedLimit,
+			orderBy: [
+				{
+					created_at: 'desc',
+				},
+				{
+					id: 'asc',
+				},
+			],
 		});
 
 		res.json({ uploads });
