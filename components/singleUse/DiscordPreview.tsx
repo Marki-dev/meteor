@@ -23,7 +23,7 @@ const DiscordPreview = ({
 			<div>
 				<p className='font-semibold hover:underline'>{username}</p>
 				<p className='text-blue-500 hover:underline'>
-					https://{domain ?? 'meteor.host'}/u/erwye789
+					{domain ?? 'https://meteor.host'}/u/erwye789
 				</p>
 				{typeof embed !== 'undefined' && embed.enabled ? (
 					<div className='flex rounded-lg'>

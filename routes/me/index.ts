@@ -20,6 +20,56 @@ router.get('/', WebAuthHandler, async (req, res) => {
 });
 
 /**
+ * @route /api/me/uploads
+ * ? URL Parameters: from: number; to: number; limit: number;
+ */
+router.get('/uploads', WebAuthHandler, async (req, res) => {
+	// Parse query parameters
+	const { from, to, limit } = req.query;
+	const fromIndex = from ? parseInt(from as string, 10) : undefined;
+	const toIndex = to ? parseInt(to as string, 10) : undefined;
+	const limitValue = limit ? parseInt(limit as string, 10) : undefined;
+
+	// Validate query parameters
+	const totalUploads = await req.db.upload.count();
+	// eslint-disable-next-line no-negated-condition
+	const fromItem = fromIndex !== undefined ? Math.max(totalUploads - fromIndex, 0) : undefined;
+	// eslint-disable-next-line no-negated-condition
+	const toItem = toIndex !== undefined ? Math.max(totalUploads - toIndex - 1, 0) : undefined;
+
+	try {
+		// Calculate the limit based on the 'from' and 'to' parameters if 'limit' is undefined
+		const calculatedLimit = limitValue ?? undefined;
+
+		// Query uploads with pagination and filtering
+		const uploads = await req.db.upload.findMany({
+			where: {
+				userId: req.user?.id,
+				created_at: {
+					gte: new Date(0),
+				},
+			},
+			skip: toItem,
+			take: calculatedLimit,
+			orderBy: [
+				{
+					created_at: 'desc',
+				},
+				{
+					id: 'asc',
+				},
+			],
+		});
+
+		res.json({ uploads });
+	} catch (error) {
+		// Handle any errors that occur during the database query
+		console.error(error);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+});
+
+/**
  * @route   DELETE /
  * ? Delete Current User Route
  * @access  Private

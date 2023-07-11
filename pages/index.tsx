@@ -7,7 +7,6 @@ export default function RedirectToDashboard() {
 
 	useEffect(() => {
 		void MeteorFetch('/config/status').then(body => {
-			console.log(body);
 			void router.push(body.goTo as string);
 		});
 	}, []);

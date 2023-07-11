@@ -1,23 +1,42 @@
-import {useEffect} from 'react';
-import {useRouter} from 'next/router';
+import { useEffect, useState } from 'react';
 import DashboardWrapper from '@/components/layout/DashboardWrapper';
-import {FaCamera, FaCommentDots, FaFileAlt, FaStickyNote, FaUpload} from 'react-icons/fa';
+import {
+	FaCamera,
+	FaDotCircle,
+	FaFileAlt,
+	FaStickyNote,
+	FaUpload,
+} from 'react-icons/fa';
+import { BsThreeDots } from 'react-icons/bs';
 import AuthLock from '@/components/utility/AuthLock';
+import MeteorFetch from '@/util/web/MeteorFetch';
+import Link from 'next/link';
+import { getDurationSince } from '@/util/universal/getDurationSince';
+import { type Upload } from '@prisma/client';
 
 export default function MainAPPPage() {
+	const [uploads, setUploads] = useState<Upload[]>([]);
+	const [stats, setStats] = useState();
+	useEffect(() => {
+		void MeteorFetch('/me/uploads').then(r => {
+			setUploads(r.uploads as any[]);
+		});
+	}, []);
 	return (
 		<AuthLock>
-
 			<DashboardWrapper>
 				{/* Stats Display */}
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3'>
 					{[
-						{name: 'Total Uploads', value: 0, icon: FaUpload},
-						{name: 'Images', value: 0, icon: FaCamera},
-						{name: 'Text Snippets', value: 0, icon: FaStickyNote},
-						{name: 'Other Files', value: 0, icon: FaFileAlt},
+						{ name: 'Total Uploads', value: 0, icon: FaUpload },
+						{ name: 'Images', value: 0, icon: FaCamera },
+						{ name: 'Text Snippets', value: 0, icon: FaStickyNote },
+						{ name: 'Other Files', value: 0, icon: FaFileAlt },
 					].map((stat, i) => (
-						<div key={i} className='flex bg-primary p-3 rounded-lg md:justify-between'>
+						<div
+							key={i}
+							className='flex bg-primary p-3 rounded-lg md:justify-between'
+						>
 							<div className='flex items-center justify-center w-1/2'>
 								<div className='bg-secondary p-5 rounded-full'>
 									<stat.icon className='text-4xl' />
@@ -31,29 +50,36 @@ export default function MainAPPPage() {
 							</div>
 						</div>
 					))}
-
 				</div>
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 transition-all gap-3 my-3'>
-					{Array.from({length: 5 * 2}).map((stat, i) => (
-						<div key={i} className=' bg-primary p-3 rounded-lg md:justify-between hover:scale-[1.05] group duration-300'>
-							<img src={`https://picsum.photos/${getRandomNumber(256, 2560)}/${getRandomNumber(256, 2560)}?penis=${i}`} alt='' className='grayscale group-hover:grayscale-0 rounded-lg w-full h-48  object-none' />
-							<div className='flex justify-between items-center'>
-								<div className='flex w-1/2 items-center h-full'>
-									<p className='text-2xl font-semibold opacity-50'>AbC1eFg2</p>
-								</div>
-								<div className='flex items-center'>
-									<FaCommentDots className='text-3xl' />
+					{uploads.slice(0, 15).map((upload, i) => (
+						<Link href={`/u/${upload.shortId}`}>
+							<div className=' bg-primary p-3 rounded-lg md:justify-between hover:scale-[1.05] group duration-300'>
+								<img
+									src={`/api/upload/${upload.shortId}`}
+									alt=''
+									className='grayscale group-hover:grayscale-0 rounded-lg w-full h-48  object-none'
+								/>
+								<div className='flex justify-between items-center'>
+									<div className='flex w-1/2 items-center h-full'>
+										<div>
+											<p className='text-xl font-bold opacity-50'>
+												{upload.shortId}
+											</p>
+											<p className='text-xs opacity-20'>
+												{getDurationSince(new Date(upload.created_at))} ago
+											</p>
+										</div>
+									</div>
+									<div className='flex items-center'>
+										<BsThreeDots className='text-3xl' />
+									</div>
 								</div>
 							</div>
-						</div>
+						</Link>
 					))}
-
 				</div>
 			</DashboardWrapper>
 		</AuthLock>
 	);
-}
-
-function getRandomNumber(min: number, max: number): number {
-	return Math.floor((Math.random() * (max - min + 1)) + min);
 }

@@ -31,7 +31,7 @@ const TwitterPreview = ({
 			</div>
 			<div>
 				<p className='text-blue-500 font-semibold my-2 hover:underline'>
-					https://{domain ?? 'meteor.host'}/u/erwye789
+					{domain ?? 'https://meteor.host'}/u/erwye789
 				</p>
 				<img
 					className='max-h-[50vh] cursor-pointer rounded-2xl shadow-sm'
@@ -68,7 +68,5 @@ function getCurrentDate() {
 
 	return `${hour}:${minute} ${period} · ${month} ${day}, ${year}`;
 }
-
-console.log(getCurrentDate());
 
 export default TwitterPreview;

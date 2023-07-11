@@ -13,7 +13,9 @@ datasource db {
 model Self {
   id           Int     @id @default(autoincrement())
   masterDomain String?
-  telemetry    Boolean @default(true)
+  proxyS3Media Boolean @default(true)
+
+  telemetry Boolean @default(true)
 }
 
 model User {
@@ -24,6 +26,7 @@ model User {
   avatar       String?
   uploadToken  String  @unique
   activeDomain String  @default("{{baseDomain}}}")
+  activeEmbed  String  @default("")
 
   domains      Domain[]
   tokens       WebToken[]
@@ -101,7 +104,7 @@ model ShortendUrl {
   url     String
 
   // Tracking Data
-  created_at DateTime @default(now())
+  created_at  DateTime  @default(now())
   last_viewed DateTime?
-  views      Int      @default(0)
+  views       Int       @default(0)
 }

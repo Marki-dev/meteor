@@ -16,6 +16,7 @@ import MeteorFetch from '@/util/web/MeteorFetch';
 import Toast from '../../components/ui/Toast';
 import Link from 'next/link';
 import { useUser } from '@/hooks/UserHook';
+import { getDurationSince } from '@/util/universal/getDurationSince';
 
 export type URLShortenerType = {
 	id: number;
@@ -132,7 +133,9 @@ const TableComponent = ({ data, refetch }: ShortenerDisplayType) => {
 						{new Date(item?.created_at).toISOString()}
 					</div>
 					<div className='w-1/7 px-4 py-2'>
-						{item.last_viewed ? new Date(item?.last_viewed).toISOString() : '-'}
+						{item.last_viewed
+							? getDurationSince(new Date(item?.last_viewed)) + ' ago'
+							: '-'}
 					</div>
 					<div className='w-1/7 px-4 py-2'>{item.views}</div>
 					<div className='w-1/7 px-4 py-2 flex items-center justify-center'>
@@ -171,3 +174,4 @@ const TableComponent = ({ data, refetch }: ShortenerDisplayType) => {
 		</div>
 	);
 };
+

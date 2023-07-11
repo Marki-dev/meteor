@@ -39,7 +39,6 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 				return;
 			}
 
-			console.log(res);
 			setUser(res as User);
 		});
 	}, []);

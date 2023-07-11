@@ -13,6 +13,7 @@ module.exports = {
 				'@typescript-eslint/naming-convention': 'off',
 				'@typescript-eslint/object-curly-spacing': 'off',
 				'@typescript-eslint/comma-dangle': 'off',
+				'@typescript-eslint/no-unsafe-assignment': 'off',
 			},
 		},
 	],

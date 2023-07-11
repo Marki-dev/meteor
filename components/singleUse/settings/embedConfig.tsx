@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import MeteorFetch from '@/util/web/MeteorFetch';
 import Input from '@/components/reusable/Input';
+import { useUser } from '@/hooks/UserHook';
 
 export type EmbedType = {
 	id?: string;
@@ -45,6 +46,7 @@ const AutocompleteOptions = [
 ];
 
 export default function EmbedConfig() {
+	const user = useUser();
 	const [userEmbeds, setUserEmbeds] = useState<EmbedType[]>([]);
 	const [embed, setEmbed] = useState<EmbedType | undefined>(undefined);
 	const [firstEmbed, setFirstEmbed] = useState<EmbedType>();
@@ -90,6 +92,7 @@ export default function EmbedConfig() {
 			body: JSON.stringify(embed),
 		}).then(() => {
 			fetchEmbeds();
+			setFirstEmbed(embed);
 		});
 	}
 
@@ -110,14 +113,16 @@ export default function EmbedConfig() {
 		Discord: (
 			<DiscordPreview
 				username='Thykie'
-				avatar='https://avatars.githubusercontent.com/u/45541936?v=4t'
+				avatar={user?.user?.avatar ?? ''}
+				domain={user?.user?.activeDomain}
 				embed={embed}
 			/>
 		),
 		Twitter: (
 			<TwitterPreview
-				avatar='https://avatars.githubusercontent.com/u/45541936?v=4t'
+				avatar={user?.user?.avatar ?? ''}
 				username='Thykie'
+				domain={user?.user?.activeDomain}
 				embed={embed}
 			/>
 		),
@@ -125,7 +130,7 @@ export default function EmbedConfig() {
 	type tabsType = keyof typeof tabs;
 	const [currentTab, setTab] = useState<tabsType>('Discord');
 
-	const openSaveModal = checkObjectDifference(firstEmbed, embed);
+	const openSaveModal = checkObjectDifference(firstEmbed ?? {}, embed ?? {});
 
 	return (
 		<>
@@ -378,7 +383,6 @@ function SelectorDropdown({
 	onDelete,
 	options,
 }: SelectorDropdownProps) {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const [selectedItem, setSelectedItem] = useState(options[0]);
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -389,7 +393,6 @@ function SelectorDropdown({
 	};
 
 	const handleItemClick = (item: any) => {
-		console.log('Selected item', item);
 		setSelectedItem(item);
 		setIsOpen(false);
 		onSelect(item);
