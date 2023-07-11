@@ -47,7 +47,7 @@ export default function NavBar() {
 						</p>
 						<img
 							className='h-10 rounded-md'
-							src='https://avatars.githubusercontent.com/u/45541936?v=4t'
+							src={userContext?.user.avatar ?? undefined}
 						/>
 						<FaChevronDown
 							className={(dropdownOpen ? 'rotate-180' : '') + ' duration-500'}
@@ -75,7 +75,7 @@ export default function NavBar() {
 							<div className='pb-3'>
 								<img
 									className='max-w-screen-md w-48 rounded-full hover:rotate-12 duration-150 transition-all'
-									src='https://avatars.githubusercontent.com/u/45541936?v=4t'
+									src={userContext?.user?.avatar ?? undefined}
 								/>
 								<p className='font-bold text-xl'>
 									{userContext?.user?.username}

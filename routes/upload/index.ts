@@ -190,15 +190,63 @@ router.get('/:id/file', async (req, res) => {
  * @route /api/upload/:id/metagen
  */
 
-router.get('/:id/metagen', async (req, res) => {
-	const {id} = req.params;
+router.get('/:id/oembed', async (req, res) => {
+	const { id } = req.params;
 	const upload = await req.db.upload.findFirst({
 		where: {
 			shortId: id
 		}
 	});
-	if (!upload) return res.json({
-		error: 'Upload does not exist'
+	if (!upload) {
+		return res.json({
+			error: 'Upload does not exist'
+		});
+	}
+
+	const user = await req.db.user.findFirst({
+		where: {
+			id: upload.userId
+		}
+	});
+
+	if (!user) {
+		return res.json({
+			error: 'User does not exist'
+		});
+	}
+
+	// If no `user.activeEmbed` return oEmbed data to just embed the photo or video, with no embed, just the file
+	// if (!user.activeEmbed) {
+	// 	return res.json({
+	// 		version: '1.0',
+	// 		type: 'photo',
+	// 		width: 240,
+	// 		height: 160,
+	// 		title: upload.title,
+	// 		url: upload.fileUrl,
+	// 		author_name: user.name,
+	// 		author_url: user.profileUrl,
+	// 		provider_name: 'Your Provider',
+	// 		provider_url: 'http://www.yourprovider.com'
+	// 	});
+	// }
+
+	// Fetch embed data
+	const embed = await req.db.embed.findFirst({
+		where: {
+			id: Number(user.activeEmbed)
+		}
+	});
+	if (!embed) return;
+	// If Embed does not exist, embed only file
+	// If embed exists, embed it with the details
+	return res.json({
+		version: '1.0',
+		type: 'photo',
+		url: `${user?.activeDomain}/api/upload/${id}/file`,
+		title: embed.title,
+		author_name: embed.author,
+		provider_name: embed.provider,
 	});
 });
 

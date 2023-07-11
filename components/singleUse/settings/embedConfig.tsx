@@ -113,14 +113,14 @@ export default function EmbedConfig() {
 		Discord: (
 			<DiscordPreview
 				username='Thykie'
-				avatar='https://avatars.githubusercontent.com/u/45541936?v=4t'
+				avatar={user?.user?.avatar ?? ''}
 				domain={user?.user?.activeDomain}
 				embed={embed}
 			/>
 		),
 		Twitter: (
 			<TwitterPreview
-				avatar='https://avatars.githubusercontent.com/u/45541936?v=4t'
+				avatar={user?.user?.avatar ?? ''}
 				username='Thykie'
 				domain={user?.user?.activeDomain}
 				embed={embed}
@@ -383,7 +383,6 @@ function SelectorDropdown({
 	onDelete,
 	options,
 }: SelectorDropdownProps) {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const [selectedItem, setSelectedItem] = useState(options[0]);
 	const [isOpen, setIsOpen] = useState(false);
 

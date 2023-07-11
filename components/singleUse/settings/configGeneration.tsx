@@ -51,7 +51,7 @@ function ConfigGenerator() {
 						Select a config type
 					</p>
 					<div className='flex flex-col items-center justify-center w-full gap-2'>
-						{['ShareX'].map((type, i) => (
+						{['ShareX', 'ShareNix', 'FlameShot', 'MagicCap'].map((type, i) => (
 							<button
 								key={i}
 								onClick={() => {
@@ -80,6 +80,7 @@ function ConfigGenerator() {
 							copyReplace='Download'
 							value={getConfig(configType, [
 								['{{token}}', userContext?.user?.uploadToken ?? 'Loading'],
+								['{{domain}}', userContext?.user?.activeDomain ?? 'Loading'],
 							])}
 						/>
 					</>

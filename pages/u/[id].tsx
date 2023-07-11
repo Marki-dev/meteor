@@ -7,40 +7,27 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { FaInfo } from 'react-icons/fa';
 import { type GetServerSideProps, type GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import { PrismaClient } from '@prisma/client';
 
-type PageMetaDataProps = any;
-
-export const getServerSideProps: GetServerSideProps<PageMetaDataProps> = async (
-	context: GetServerSidePropsContext
-) => {
-	const shortId = context.query.uploadId;
-	if (!shortId) return { props: {} }; // Return an empty props object or handle the case when uploadId is not provided
-
-	try {
-		const response = await fetch(`/api/upload/${shortId as string}/metagen`);
-
-		const metaData = await response.json();
-
-		const props: PageMetaDataProps = {
-			metaData, // Assign the fetched metadata to the props
-		};
-
-		return { props };
-	} catch (error) {
-		// Handle any errors that occur during server-side rendering
-		console.error(error);
-		return {
-			props: {
-				lol: true,
-			},
-		};
-	}
+type GSSProps = {
+	oEmbedURI: string;
 };
 
-export default function FileView({ props }: { props: PageMetaDataProps }) {
-	const router = useRouter();
-	const shortId = router.query.uploadId;
+export const getServerSideProps: GetServerSideProps<GSSProps> = async (
+	context: GetServerSidePropsContext
+) => {
+	const { id } = context.query;
+	return {
+		props: {
+			oEmbedURI: `/api/upload/${id as string}/oembed`,
+		},
+	};
+};
 
+export default function FileView({ oEmbedURI }: GSSProps) {
+	const router = useRouter();
+	const { id } = router.query;
+	console.log('id', oEmbedURI);
 	const [uploadData, setUploadData] = useState();
 	const [panelOpen, setPanelOpen] = useState(false);
 	const panelRef = useRef<HTMLDivElement>(null);
@@ -57,7 +44,7 @@ export default function FileView({ props }: { props: PageMetaDataProps }) {
 	}
 
 	async function getImageMetadata() {
-		const imageUrl = `/api/upload/${shortId as string}`;
+		const imageUrl = `/api/upload/${id as string}`;
 
 		try {
 			const imageBuffer = await getImageBuffer(imageUrl);
@@ -71,10 +58,10 @@ export default function FileView({ props }: { props: PageMetaDataProps }) {
 	}
 
 	useEffect(() => {
-		if (!shortId) return;
+		if (!id) return;
 		void getImageMetadata();
-		void MeteorFetch(`/upload/${shortId as string}/data`).then(setUploadData);
-	}, [shortId]);
+		void MeteorFetch(`/upload/${id as string}/data`).then(setUploadData);
+	}, [id]);
 
 	function handlePanelToggle() {
 		setPanelOpen(!panelOpen);
@@ -100,10 +87,7 @@ export default function FileView({ props }: { props: PageMetaDataProps }) {
 	return (
 		<div>
 			<Head>
-				{/* <link
-					type='application/json+oembed'
-					href={`/api/upload/${shortId as string}/oembed`}
-				/> */}
+				<link type='application/json+oembed' href={oEmbedURI} />
 			</Head>
 			<NavBar />
 			<AnimatePresence>
@@ -128,7 +112,7 @@ export default function FileView({ props }: { props: PageMetaDataProps }) {
 					<div className='flex flex-col items-center justify-center h-full'>
 						<img
 							className='hover:scale-110 rounded-3xl hover:rounded-sm duration-300 shadow-xl max-h-[70vh]'
-							src={`/api/upload/${shortId as string}`}
+							src={`/api/upload/${id as string}`}
 						/>
 						<button
 							className='mt-10 bg-blue-500 p-3 rounded-md'
