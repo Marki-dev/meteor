@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import MeteorFetch from '@/util/web/MeteorFetch';
 
 export default function RedirectToDashboard() {
-	const router = useRouter();
+  const router = useRouter();
 
-	useEffect(() => {
-		void MeteorFetch('/config/status').then(body => {
-			void router.push(body.goTo as string);
-		});
-	}, []);
+  useEffect(() => {
+    void MeteorFetch('/config/status').then(body => {
+      void router.push(body.goTo as string);
+    });
+  }, []);
 
-	return null;
+  return null;
 }

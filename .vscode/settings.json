@@ -1,4 +1,4 @@
 {
-    "prettier.endOfLine": "crlf",
-    "prettier.singleQuote": true
+  "prettier.endOfLine": "crlf",
+  "prettier.singleQuote": true
 }

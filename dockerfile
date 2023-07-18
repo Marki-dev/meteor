@@ -8,12 +8,16 @@ WORKDIR /app
 COPY . .
 COPY package*.json ./
 
+# Pull ENV from docker-compose
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
+# Print the value of DATABASE_URL
+RUN echo "DATABASE_URL: $DATABASE_URL"
 
 # Build the Next.js app
 RUN npm install
-run npm install -g ts-node prisma
-RUN prisma generate
-RUN npm run build
+RUN npm install -g ts-node prisma
 
-# Switch back to the root directory and start the Express app
-CMD ["ts-node", "."]
+# Custom entry point to generate Prisma client
+ENTRYPOINT ["/bin/bash", "-c", "prisma db push && npm run build && ts-node ."]
