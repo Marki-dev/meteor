@@ -4,56 +4,56 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import Toast from '../ui/Toast';
 
 type JsonViewerProps = {
-	value: any;
-	copyReplace?: string;
-	redact?: string[];
-	takeOverFunction?: () => void;
+  value: any;
+  copyReplace?: string;
+  redact?: string[];
+  takeOverFunction?: () => void;
 };
 
 const JSONRender: React.FC<JsonViewerProps> = ({
-	value,
-	takeOverFunction,
-	copyReplace,
-	redact,
+  value,
+  takeOverFunction,
+  copyReplace,
+  redact,
 }) => {
-	let jsonValue = JSON.stringify(value, null, 2);
-	if (redact) {
-		// eslint-disable-next-line @typescript-eslint/prefer-for-of
-		for (let i = 0; i < redact.length; i++) {
-			const key = redact[i];
+  let jsonValue = JSON.stringify(value, null, 2);
+  if (redact) {
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < redact.length; i++) {
+      const key = redact[i];
 
-			jsonValue = jsonValue.replace(
-				key,
-				key.length > 1 ? '*'.repeat(key.length) : '*'
-			);
-		}
-	}
+      jsonValue = jsonValue.replace(
+        key,
+        key.length > 1 ? '*'.repeat(key.length) : '*',
+      );
+    }
+  }
 
-	function copyCode() {
-		if (takeOverFunction) {
-			takeOverFunction();
-			return;
-		}
+  function copyCode() {
+    if (takeOverFunction) {
+      takeOverFunction();
+      return;
+    }
 
-		void navigator.clipboard.writeText(value as string);
-		Toast({
-			titleText: 'Copied to clipboard!',
-		});
-	}
+    void navigator.clipboard.writeText(value as string);
+    Toast({
+      titleText: 'Copied to clipboard!',
+    });
+  }
 
-	return (
-		<div className='rounded-xl relative'>
-			<div
-				onClick={copyCode}
-				className='absolute top-4 right-4 p-3 bg-primary rounded-md shadow-xl hover:opacity-80'
-			>
-				{copyReplace ?? 'Copy'}
-			</div>
-			<SyntaxHighlighter language='json' style={vscDarkPlus}>
-				{jsonValue}
-			</SyntaxHighlighter>
-		</div>
-	);
+  return (
+    <div className='rounded-xl relative'>
+      <div
+        onClick={copyCode}
+        className='absolute top-4 right-4 p-3 bg-primary rounded-md shadow-xl hover:opacity-80'
+      >
+        {copyReplace ?? 'Copy'}
+      </div>
+      <SyntaxHighlighter language='json' style={vscDarkPlus}>
+        {jsonValue}
+      </SyntaxHighlighter>
+    </div>
+  );
 };
 
 export default JSONRender;

@@ -1,18 +1,18 @@
-
 # Meteor
 
 # THIS IS STILL IN DEVELOPMENT, THIS MAY NOT WORK AS EXPECTED
-## **Status: Unfunctional**
+
+## **Status: Semifunctional (Requires Manual Database Entries; NO EMBED SUPPORT YET)**
 
 ---
 
 Welcome to Meteor, a simple and self-hostable ShareX Uploader. This project is currently in development, and while it may have some missing features and bugs, I am actively working on improving it.
 
 ## Getting Started
+
 Getting started with Meteor is easy as it leverages [Docker](https://docker.com) as its engine. Before you begin, you need to set your basic credentials for the app. By default, Meteor can run independently, but if you prefer, you can use a cloud-provided S3 Bucket service to gain access to a CDN (see instructions in the #ExternalS3Bucket section).
 
 To configure Meteor, you need to modify the docker-compose.yml file. I have provided a template with the required variables, which you need to set with your own credentials for the app's services.
-
 
 ```yml
 version: '3.8'
@@ -33,7 +33,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     networks:
       - meteor-network
     depends_on:
@@ -47,7 +47,7 @@ services:
       - MYSQL_USER=sql-username
       - MYSQL_PASSWORD=sql-password
     ports:
-      - "3306:3306"
+      - '3306:3306'
     networks:
       - meteor-network
 
@@ -55,7 +55,7 @@ services:
     image: minio/minio
     command: server /data
     ports:
-      - "9000:9000"
+      - '9000:9000'
     environment:
       - MINIO_ACCESS_KEY=S3-ACCESS-KEY
       - MINIO_SECRET_KEY=S3-SECRET-KEY
@@ -70,13 +70,14 @@ networks:
 
 volumes:
   minio-data:
-
 ```
+
 Feel free to modify the environment variables according to your setup. Once you have made the necessary changes, you can start the Meteor application by running docker-compose up in the project directory.
 
 Remember to replace `sql-username`, `sql-password`, `S3-ACCESS-KEY`, and `S3-SECRET-KEY` with your actual values. You can also modify other variables to suit your needs.
 
 ## External S3 Bucket (Optional)
+
 If you prefer to use a cloud-provided S3 Bucket service and gain access to a CDN, follow these instructions:
 
 Sign up for an account with a cloud storage provider that offers an S3-compatible service (e.g., Amazon S3, DigitalOcean Spaces).

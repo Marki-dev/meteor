@@ -10,11 +10,11 @@ const router = Router();
  * @returns {Object} Info
  * * This route is designed for the front-end to figure out where the main page needs
  * * to send the user to
-*/
+ */
 router.get('/', (req, res) => {
-	res.json({
-		goTo: '/config/setup'
-	});
+  res.json({
+    goTo: '/config/setup',
+  });
 });
 
 export default router;

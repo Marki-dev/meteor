@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "ts-node .",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-quality": "eslint . && prettier --check .",
+    "fix-quality": "eslint --fix . && prettier --write ."
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",
